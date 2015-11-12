@@ -1,8 +1,6 @@
 import operator
 import copy
 
-import tapps
-
 def main(dataframe, parameters):
     '''
     Function to perform stepwise Vmax optimization, so that the simulated 
