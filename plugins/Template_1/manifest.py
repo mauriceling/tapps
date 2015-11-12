@@ -1,11 +1,11 @@
 '''
-This file contains the properties / information about the plugin and should be filled 
-up by the plugin / app developer. This file is mandatory for each plugin as it contains 
-information to be used by Plugin / App Manager for categorization and display to the 
-user.
+This file contains the properties / information about the plugin and should 
+be filled up by the plugin / app developer. This file is mandatory for each 
+plugin as it contains information to be used by Plugin / App Manager for 
+categorization and display to the user.
 
-All labels are required to be present; only those mandatory labels needs to be filled 
-up.
+All labels are required to be present; only those mandatory labels needs 
+to be filled up.
 '''
 
 # Name of the plugin / app (mandatory)
