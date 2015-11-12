@@ -23,20 +23,6 @@ import os
 import sys
 from datetime import datetime
 
-# attempt to import readline or pyreadline
-try:
-    import readline
-    readline_import = True
-    pyreadline_import = False
-except ImportError:
-    readline_import = False
-    try:
-        import pyreadline as readline
-        pyreadline_import = True
-    except ImportError:
-        readline_import = False
-        pyreadline_import = False
-        
 import copads
 from copads.dataframe import Series
 from copads.dataframe import Dataframe
@@ -60,6 +46,18 @@ def RunPlugin(plugin_name, parameters, session):
     
     
 def RunShell(MDF, session):
+    try:
+        import readline
+        readline_import = True
+        pyreadline_import = False
+    except ImportError:
+        readline_import = False
+        try:
+            import pyreadline as readline
+            pyreadline_import = True
+        except ImportError:
+            readline_import = False
+            pyreadline_import = False
     shell = commandshell.Shell()
     shell.header()
     if readline_import:
