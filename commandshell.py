@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os, sys, copy, random, traceback
 from datetime import datetime
     
+import engine as e
 import tappslex
 import tappsparse
 
@@ -50,15 +51,15 @@ class Shell(object):
     
     
     def do_copyright(self):
-        print()
+        print('')
         print('Copyright (C) 2015, Maurice HT Ling (on behalf of TAPPS Team)')
-        print()
+        print('')
     
     def do_credits(self):
-        print()
+        print('')
         print('''TAPPS Project Team
 Project architect: Maurice HT Ling (mauriceling@acm.org)''')
-        print()
+        print('')
     
         
     def do_help(self, option, param, count):
@@ -87,7 +88,7 @@ Type help <command> for more help (if any)'''
             print(txt)
     
     def do_license(self):
-        print()
+        print('')
         print('''
                      GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -710,7 +711,7 @@ Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 
         END OF TERMS AND CONDITIONS''')
-        print()
+        print('')
         
     def do_list(self, option, param, count):
         '''
@@ -910,6 +911,7 @@ Pre-requisite(s): None
                 if statement == 'copyright': self.do_copyright()
                 elif statement == 'credits': self.do_credits()
                 elif statement == 'license': self.do_license()
+                elif statement == 'quit': return 0 
                 else:
                     pstatement = tappsparse.parse(statement)
                     self.phistory[str(count)] = pstatement
