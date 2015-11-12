@@ -380,7 +380,7 @@ class MultiDataframe(Dataframe):
         self.frame_names = []
         self.analyses = {}
         
-    def addDataFrame(self, dataframe, replace=False):
+    def addDataframe(self, dataframe, replace=False):
         '''
         Method to add a data frame. It is highly encouraged that all 
         data frames to be added have their own identifying names. In event 
@@ -395,7 +395,7 @@ class MultiDataframe(Dataframe):
         be added.
         '''
         df_name = dataframe.name
-        used_names = self.frame.keys()
+        used_names = self.frames.keys()
         if (not replace) and (df_name in used_names):
             while df_name in used_names:
                 df_name = df_name + '_' + \
