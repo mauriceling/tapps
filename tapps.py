@@ -15,5 +15,6 @@ session = startup.session
 session = startup.startup(session)
 
 def RunPlugin(plugin_name, parameters, session=session):
-    results = session['plugin_' + plugin_name]['main'](dataframe, parameters)
+    plugin_name = 'plugin_' + plugin_name
+    results = session[plugin_name]['main'](parameters)
     return results
