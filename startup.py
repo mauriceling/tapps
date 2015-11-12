@@ -1,3 +1,9 @@
+'''
+Runs the startup operations of TAPPS
+
+Date created: 11th November 2015
+'''
+
 import os
 import sys
 
@@ -18,6 +24,37 @@ session = \
 plugin_categories = ['template']
 
 def loadPlugin(plugin, session=session):
+    '''
+    Function to perform basic checks and load a plugin into session 
+    dictionary to get it ready for use.
+    
+    The following checks are done:
+        1. Able to import plugin module (check for presence of a valid 
+        Python module with __init__.py file)
+        2. Able to import plugin manifest (check for presence of manifest 
+        file: <plugin module>/manifest.py)
+        3. Able to import main function, which is the plugin entry 
+        function, from <plugin module>/main.py file
+        4. Check for presence of plugin's name in manifest file
+        5. Check for presence of plugin's release (version number) in 
+        manifest file
+        6. Check for valid category in manifest file
+        7. Check for presence of plugin's short description in manifest 
+        file
+        8. Check for presence of plugin's long description in manifest file
+        9. Check for presence of plugin's URL in manifest file
+        10. Check for presence of plugin author(s)' contact(s) in manifest 
+        file
+        11. Check for presence of plugin's license in manifest file
+    
+    @param plugin: module name of plugin to load (corresponding to the 
+    folder/dictionary which the plugin resides - <current working 
+    directory>/plugin/<plugin folder name>)
+    @type plugin: string
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @return: session dictionary
+    '''
     checks = ['ImportError:Plugin',
               'ImportError:Manifest',
               'ImportError:MainFunction',
@@ -92,6 +129,20 @@ def loadPlugin(plugin, session=session):
 
 
 def getPlugins(path=session['paths']['plugins'], session=session):
+    '''
+    Function to discover available plugins and load each of the plugins 
+    into session dictionary and get the plugins ready for use. Each plugin 
+    resides within its own folder in the plugin directory/folder; hence, 
+    the plugins discovery process is to list down the directory/folder 
+    names within the plugin directory/folder.
+    
+    @param path: full path to plugin directory/folder. Default = <current 
+    working directory>/plugins
+    @type path: string
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @return: session dictionary
+    '''
     plugin_directories = [x for x in os.walk(path)][0][1]
     for plugin in plugin_directories:
         (session, checks) = loadPlugin(plugin, session)
@@ -103,5 +154,15 @@ def getPlugins(path=session['paths']['plugins'], session=session):
             
 
 def startup(session=session):
+    '''
+    Main function to execute all startup routines, which includes the 
+    following:
+        1. Get a list of available plugins and load each of them.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @return: session dictionary
+    '''
     getPlugins(session['paths']['plugins'], session)
     return session
+    
