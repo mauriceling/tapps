@@ -19,6 +19,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import os
+import sys
+from datetime import datetime
+
 # attempt to import readline or pyreadline
 try:
     import readline
@@ -36,14 +40,18 @@ except ImportError:
 import copads
 from copads.dataframe import Series
 from copads.dataframe import Dataframe
+from copads.dataframe import MultiDataframe
 
 import commandshell
 import startup
 
 global session
+global MDF
 
 session = startup.session
 session = startup.startup(session)
+
+MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow())
 
 def RunPlugin(plugin_name, parameters, session=session):
     plugin_name = 'plugin_' + plugin_name
