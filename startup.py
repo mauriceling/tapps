@@ -9,8 +9,10 @@ session = \
           },
  'plugins': {'loadFail': {},
              'loaded': [],
-             'dummy': [],
+             'template': [],
             },
+ 'analyses': {
+             },
 }
 
 plugin_categories = ['template']
