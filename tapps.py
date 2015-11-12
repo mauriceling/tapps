@@ -43,6 +43,7 @@ from copads.dataframe import Dataframe
 from copads.dataframe import MultiDataframe
 
 import commandshell
+import engine as e
 import startup
 
 global session
@@ -51,15 +52,14 @@ global MDF
 session = startup.session
 session = startup.startup(session)
 
-MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow())
+MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow()))
 
-def RunPlugin(plugin_name, parameters, session=session):
-    plugin_name = 'plugin_' + plugin_name
-    results = session[plugin_name]['main'](parameters)
-    return results
+
+def RunPlugin(plugin_name, parameters, session):
+    return e.RunPlugin(plugin_name, parameters, session)
     
     
-def RunShell():
+def RunShell(MDF, session):
     shell = commandshell.Shell()
     shell.header()
     if readline_import:
@@ -75,5 +75,5 @@ def RunShell():
     
     
 if __name__ == '__main__':
-    RunShell()
+    RunShell(MDF, session)
     sys.exit()
