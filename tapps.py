@@ -40,7 +40,35 @@ session = startup.startup(session)
 
 MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow()))
 
+import plugins
 
+session = \
+{'paths': {'cwd': os.getcwd(),
+           'plugins': os.sep.join([os.getcwd(), 'plugins']),
+          },
+ 'plugins': {'loadFail': {},
+             'loaded': [],
+             'template': [],
+            },
+ 'analyses': {
+             },
+}
+
+
+def startup(session=session):
+    '''
+    Main function to execute all startup routines, which includes the 
+    following:
+        1. Get a list of available plugins and load each of them.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @return: session dictionary
+    '''
+    session = e.getPlugins(session['paths']['plugins'], session)
+    return session
+    
+    
 def RunPlugin(plugin_name, parameters, session):
     return e.RunPlugin(plugin_name, parameters, session)
     
