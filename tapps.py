@@ -72,6 +72,54 @@ def startup(session):
     session = e.GetPlugins(session, session['paths']['plugins'])
     return session
     
+def LoadPlugin(session, plugin):
+    '''
+    Function to perform basic checks and load a plugin into session 
+    dictionary to get it ready for use.
+    
+    The following checks are done:
+        1. Able to import plugin module (check for presence of a valid 
+        Python module with __init__.py file)
+        2. Able to import plugin manifest (check for presence of manifest 
+        file: <plugin module>/manifest.py)
+        3. Able to import main function, which is the plugin entry 
+        function, from <plugin module>/main.py file
+        4. Check for presence of plugin's name in manifest file
+        5. Check for presence of plugin's release (version number) in 
+        manifest file
+        6. Check for valid category in manifest file
+        7. Check for presence of plugin's short description in manifest 
+        file
+        8. Check for presence of plugin's long description in manifest file
+        9. Check for presence of plugin's URL in manifest file
+        10. Check for presence of plugin author(s)' contact(s) in manifest 
+        file
+        11. Check for presence of plugin's license in manifest file
+    
+    The following changes will be made to session dictionary:
+        1. If plugin is successfully loaded, the plugin name will be 
+        appended to session['plugins']['loaded']
+        2. If plugin is successfully loaded, the plugin name will be 
+        appended to session['plugins'][<plugin category>]
+        3. If plugin is successfully loaded, details of the plugin will 
+        be loaded into session['plugins_<plugin name>'], and 
+        session['plugins_<plugin name>']['main'] will contain the function 
+        entry point for the plugin
+        4. If plugin is NOT successfully loaded (failure in one or more of 
+        the above checklist), the checklist for the plugin will be loaded 
+        into session['plugins']['loadFail'][<plugin name>]
+        
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param plugin: module name of plugin to load (corresponding to the 
+    folder/dictionary which the plugin resides - <current working 
+    directory>/plugin/<plugin folder name>)
+    @type plugin: string
+    @return: session dictionary
+    '''
+    session = e.LoadPlugin(session, plugin)
+    return session
+    
     
 def RunPlugin(session, parameters):
     '''
