@@ -75,7 +75,7 @@ def startup(session):
     session = e.GetPlugins(session, session['paths']['plugins'])
     return session
     
-def LoadPlugin(session, plugin):
+def LoadPlugin(session, plugin_name):
     '''
     Function to perform basic checks and load a plugin into session 
     dictionary to get it ready for use.
@@ -114,13 +114,13 @@ def LoadPlugin(session, plugin):
         
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
-    @param plugin: module name of plugin to load (corresponding to the 
+    @param plugin_name: module name of plugin to load (corresponding to the 
     folder/dictionary which the plugin resides - <current working 
     directory>/plugin/<plugin folder name>)
-    @type plugin: string
+    @type plugin_name: string
     @return: session dictionary
     '''
-    session = e.LoadPlugin(session, plugin)
+    session = e.LoadPlugin(session, plugin_name)
     return session
     
 def RunPlugin(session, parameter_name):

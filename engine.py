@@ -30,7 +30,7 @@ from copads.dataframe import MultiDataframe
 
 plugin_categories = ['template']
 
-def LoadPlugin(session, plugin):
+def LoadPlugin(session, plugin_name):
     '''
     Function to perform basic checks and load a plugin into session 
     dictionary to get it ready for use.
@@ -69,10 +69,10 @@ def LoadPlugin(session, plugin):
         
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
-    @param plugin: module name of plugin to load (corresponding to the 
+    @param plugin_name: module name of plugin to load (corresponding to the 
     folder/dictionary which the plugin resides - <current working 
     directory>/plugin/<plugin folder name>)
-    @type plugin: string
+    @type plugin_name: string
     @return: session dictionary
     '''
     checks = ['ImportError:Plugin',
@@ -147,7 +147,6 @@ def LoadPlugin(session, plugin):
                                             'license': license}
     return session
 
-
 def GetPlugins(session, path):
     '''
     Function to discover available plugins and load each of the plugins 
@@ -187,7 +186,6 @@ def GetPlugins(session, path):
         session['plugins'][category] = plugin_list
     return session
     
-    
 def RunPlugin(session, parameter_name):
     '''
     Function to run/execute a plugin using the parameters (sub-dictionary 
@@ -224,7 +222,6 @@ def RunPlugin(session, parameter_name):
     session['parameters'][parameter_name]['results'] = results
     return session
     
- 
 def LoadCSV(session, filepath, series_header, separator, fill_in, newline):
     '''
     Function to load a comma-delimited (CSV) file as a data frame.
