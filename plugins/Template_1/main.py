@@ -19,8 +19,8 @@ def main(parameters):
     # END Step 1: Pull out needed items / data from parameters dictionary
     
     # Step 2: Perform plugin operations
-    if method == 'label_summation':
-        (summation, labels) = label_summation(dataframe)
+    if method == 'summation':
+        (summation, labels) = series_summation(dataframe)
         results.addData({'summation': summation}, 
                         labels)
     # END Step 2: Perform plugin operations
@@ -31,10 +31,15 @@ def main(parameters):
     # END Step 3: Load dataframe and results back into parameters dictionary
     return parameters
     
-def label_summation(dataframe):
+def series_summation(dataframe):
+    '''
+    Function to perform summation of each series in the dataframe.
+    '''
     labels = dataframe.data.keys()
-    summation = [sum([float(item) 
-                      for item in dataframe.data[label]]) 
-                 for label in labels]
-    return (summation, labels)
+    series = dataframe.series_names
+    summation = []
+    for index in range(len(series)):
+        sdata = [float(dataframe.data[label][index]) for label in labels]
+        summation.append(sum(sdata))
+    return (summation, series)
     
