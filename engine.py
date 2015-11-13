@@ -218,8 +218,8 @@ def RunPlugin(session, parameter_name):
     '''
     plugin_name = 'plugin_' + \
                   session['parameters'][parameter_name]['plugin_name']
-    results = session[plugin_name]['main'](session['parameters'][parameter_name])
-    session['parameters'][parameter_name]['results'] = results
+    parameters = session[plugin_name]['main'](session['parameters'][parameter_name])
+    session['parameters'][parameter_name] = parameters
     return session
     
 def LoadCSV(session, filepath, series_header, separator, fill_in, newline):
