@@ -55,6 +55,7 @@ session = \
 parameters = \
 {'analysis_name': None,
  'plugin_name': None,
+ 'dataframe': None,
  'results': None,
 }
 
@@ -68,23 +69,77 @@ def startup(session):
     Please see module documentation for more details.
     @return: session dictionary
     '''
-    session = e.getPlugins(session['paths']['plugins'], session)
+    session = e.GetPlugins(session, session['paths']['plugins'])
     return session
     
     
-def RunPlugin(parameters, session):
-    session = e.RunPlugin(parameters, session)
+def RunPlugin(session, parameters):
+    '''
+    Function to run/execute a plugin using the parameters needed for the 
+    plugin and returning the execution results into session dictionary.
+    
+    The parameters dictionary will need to contain values for the following 
+    keys:
+        - analysis_name: user-given name for the analytical execution of 
+        plugin
+        - plugin_name: name of plugin to execute
+        - dataframe: a dataframe object to act as data for use by the 
+        plugin
+    and any other plugin-specific parameters/options.
+    
+    After execution, analysis results will be returned as value to 
+    'results' key in the parameters dictionary, and the entire parameters 
+    dictionary will be loaded into 'analysis' sub-dictionary within the 
+    session dictionary using the analysis_name as key.
+    
+    Hence, session['analyses'][<analysis_name>] will hold the parameters 
+    dictionary.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param parameters: dictionary to hold all the parameters needed to 
+    execute the plugin. Please see module documentation for more details.
+    @return: session dictionary
+    '''
+    session = e.RunPlugin(session, parameters)
     return session
     
     
-def LoadCSV(filepath, series_header=True, separator=',', 
+def LoadCSV(session, filepath, series_header=True, separator=',', 
             fill_in=None, newline='\n'):
-    session = e.LoadCSV(filepath, series_header, separator, 
+    '''
+    Function to load a comma-delimited (CSV) file as a data frame.
+    
+    The data frame will have the filepath as name, and will be loaded into 
+    session dictionary under 'new_dataframe' key.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param filepath: path to CSV file.
+    @type filepath: string
+    @param series_header: boolean flag to denote whether the first row 
+    in the CSV file contains the data header. It is highly recommended 
+    that header is included in the CSV file. Default = True (header is 
+    included)
+    @param separator: item separator within the CSV file. Default = ','
+    @param fill_in: value to fill into missing values during process. 
+    This is required as the number of data elements across each label 
+    must be the same. Hence, filling in of missing values can occur 
+    when (1) the newly added data series consists of new labels which 
+    are not found in the current data frame (this will require filling 
+    in of missing values in the current data frame), or (2) the current 
+    data frame consists of labels that are not found in the newly 
+    added data series (this will require filling in of missing values 
+    to the newly added data series). Default = None.
+    @param newline: character to denote new line or line feed in the 
+    CSV file. Default = '\n'
+    '''
+    session = e.LoadCSV(session, filepath, series_header, separator, 
                         fill_in, newline)
     return session
     
     
-def RunShell(MDF, session):
+def RunShell(session, MDF):
     try:
         import readline
         readline_import = True
@@ -115,5 +170,5 @@ session = startup(session)
 
 
 if __name__ == '__main__':
-    RunShell(MDF, session)
+    RunShell(session, MDF)
     sys.exit()

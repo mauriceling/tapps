@@ -30,7 +30,7 @@ from copads.dataframe import MultiDataframe
 
 plugin_categories = ['template']
 
-def loadPlugin(plugin, session):
+def LoadPlugin(session, plugin):
     '''
     Function to perform basic checks and load a plugin into session 
     dictionary to get it ready for use.
@@ -54,12 +54,12 @@ def loadPlugin(plugin, session):
         file
         11. Check for presence of plugin's license in manifest file
     
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
     @param plugin: module name of plugin to load (corresponding to the 
     folder/dictionary which the plugin resides - <current working 
     directory>/plugin/<plugin folder name>)
     @type plugin: string
-    @param session: dictionary to hold all data within the current session. 
-    Please see module documentation for more details.
     @return: session dictionary
     '''
     checks = ['ImportError:Plugin',
@@ -135,24 +135,25 @@ def loadPlugin(plugin, session):
     return session
 
 
-def getPlugins(path, session):
+def GetPlugins(session, path):
     '''
     Function to discover available plugins and load each of the plugins 
-    into session dictionary and get the plugins ready for use. Each plugin 
-    resides within its own folder in the plugin directory/folder; hence, 
-    the plugins discovery process is to list down the directory/folder 
-    names within the plugin directory/folder.
+    (using engine.LoadPlugin function to each each plugin) into session 
+    dictionary and get the plugins ready for use. Each plugin resides 
+    within its own folder in the plugin directory/folder; hence, the 
+    plugins discovery process is to list down the directory/folder names 
+    within the plugin directory/folder.
     
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
     @param path: full path to plugin directory/folder. Default = <current 
     working directory>/plugins
     @type path: string
-    @param session: dictionary to hold all data within the current session. 
-    Please see module documentation for more details.
     @return: session dictionary
     '''
     plugin_directories = [x for x in os.walk(path)][0][1]
     for plugin in plugin_directories:
-        session = loadPlugin(plugin, session)
+        session = LoadPlugin(session, plugin)
     for category in plugin_categories:
         plugin_list = session['plugins'][category]
         plugin_list = list(set(plugin_list))
@@ -160,7 +161,34 @@ def getPlugins(path, session):
     return session
     
     
-def RunPlugin(parameters, session):
+def RunPlugin(session, session):
+    '''
+    Function to run/execute a plugin using the parameters needed for the 
+    plugin and returning the execution results into session dictionary.
+    
+    The parameters dictionary will need to contain values for the following 
+    keys:
+        - analysis_name: user-given name for the analytical execution of 
+        plugin
+        - plugin_name: name of plugin to execute
+        - dataframe: a dataframe object to act as data for use by the 
+        plugin
+    and any other plugin-specific parameters/options.
+    
+    After execution, analysis results will be returned as value to 
+    'results' key in the parameters dictionary, and the entire parameters 
+    dictionary will be loaded into 'analysis' sub-dictionary within the 
+    session dictionary using the analysis_name as key.
+    
+    Hence, session['analyses'][<analysis_name>] will hold the parameters 
+    dictionary.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param parameters: dictionary to hold all the parameters needed to 
+    execute the plugin. Please see module documentation for more details.
+    @return: session dictionary
+    '''
     plugin_name = 'plugin_' + parameters['plugin_name']
     results = session[plugin_name]['main'](parameters)
     parameters['results'] = results
@@ -169,7 +197,33 @@ def RunPlugin(parameters, session):
     return session
     
  
-def LoadCSV(filepath, series_header, separator, fill_in, newline):
+def LoadCSV(session, filepath, series_header, separator, fill_in, newline):
+    '''
+    Function to load a comma-delimited (CSV) file as a data frame.
+    
+    The data frame will have the filepath as name, and will be loaded into 
+    session dictionary under 'new_dataframe' key.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param filepath: path to CSV file.
+    @type filepath: string
+    @param series_header: boolean flag to denote whether the first row 
+    in the CSV file contains the data header. It is highly recommended 
+    that header is included in the CSV file. 
+    @param separator: item separator within the CSV file.
+    @param fill_in: value to fill into missing values during process. 
+    This is required as the number of data elements across each label 
+    must be the same. Hence, filling in of missing values can occur 
+    when (1) the newly added data series consists of new labels which 
+    are not found in the current data frame (this will require filling 
+    in of missing values in the current data frame), or (2) the current 
+    data frame consists of labels that are not found in the newly 
+    added data series (this will require filling in of missing values 
+    to the newly added data series).
+    @param newline: character to denote new line or line feed in the 
+    CSV file.
+    '''
     dataframe = DataFrame(filepath)
     dataframe.addCSV(filepath, series_header, separator, fill_in, newline)
     session['new_dataframe'] = dataframe
