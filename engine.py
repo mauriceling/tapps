@@ -54,6 +54,19 @@ def LoadPlugin(session, plugin):
         file
         11. Check for presence of plugin's license in manifest file
     
+    The following changes will be made to session dictionary:
+        1. If plugin is successfully loaded, the plugin name will be 
+        appended to session['plugins']['loaded']
+        2. If plugin is successfully loaded, the plugin name will be 
+        appended to session['plugins'][<plugin category>]
+        3. If plugin is successfully loaded, details of the plugin will 
+        be loaded into session['plugins_<plugin name>'], and 
+        session['plugins_<plugin name>']['main'] will contain the function 
+        entry point for the plugin
+        4. If plugin is NOT successfully loaded (failure in one or more of 
+        the above checklist), the checklist for the plugin will be loaded 
+        into session['plugins']['loadFail'][<plugin name>]
+        
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
     @param plugin: module name of plugin to load (corresponding to the 
@@ -123,7 +136,7 @@ def LoadPlugin(session, plugin):
     if pass_rate < 1.0:
         session['plugins']['loadFail'][plugin] = checks
     else:
-        session['plugins']['loaded'] = plugin_name
+        session['plugins']['loaded'].append(plugin_name)
         session['plugins'][category].append(plugin_name)
         session['plugin_' + plugin_name] = {'main': main,
                                             'release': release,
@@ -138,12 +151,26 @@ def LoadPlugin(session, plugin):
 def GetPlugins(session, path):
     '''
     Function to discover available plugins and load each of the plugins 
-    (using engine.LoadPlugin function to each each plugin) into session 
+    (using engine.LoadPlugin function to each plugin) into session 
     dictionary and get the plugins ready for use. Each plugin resides 
     within its own folder in the plugin directory/folder; hence, the 
     plugins discovery process is to list down the directory/folder names 
     within the plugin directory/folder.
     
+    As this function calls engine.LoadPlugin function repeatedly to each 
+    plugin, the following changes will be made to session dictionary:
+        1. If plugin is successfully loaded, the plugin name will be 
+        appended to session['plugins']['loaded']
+        2. If plugin is successfully loaded, the plugin name will be 
+        appended to session['plugins'][<plugin category>]
+        3. If plugin is successfully loaded, details of the plugin will 
+        be loaded into session['plugins_<plugin name>'], and 
+        session['plugins_<plugin name>']['main'] will contain the function 
+        entry point for the plugin
+        4. If plugin is NOT successfully loaded (failure in one or more of 
+        the above checklist), the checklist for the plugin will be loaded 
+        into session['plugins']['loadFail'][<plugin name>]
+        
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
     @param path: full path to plugin directory/folder. Default = <current 
