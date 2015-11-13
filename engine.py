@@ -30,7 +30,7 @@ from copads.dataframe import MultiDataframe
 
 plugin_categories = ['template']
 
-def LoadPlugin(session, plugin_name):
+def LoadPlugin(session, plugin):
     '''
     Function to perform basic checks and load a plugin into session 
     dictionary to get it ready for use.
@@ -69,10 +69,10 @@ def LoadPlugin(session, plugin_name):
         
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
-    @param plugin_name: module name of plugin to load (corresponding to the 
+    @param plugin: module name of plugin to load (corresponding to the 
     folder/dictionary which the plugin resides - <current working 
     directory>/plugin/<plugin folder name>)
-    @type plugin_name: string
+    @type plugin: string
     @return: session dictionary
     '''
     checks = ['ImportError:Plugin',
