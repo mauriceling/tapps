@@ -283,6 +283,28 @@ class Dataframe(object):
             s = self.toSeries(series)
             df.addSeries(s)
         return df
+        
+    def extractLabels(self, label_names, new_dataframe_name=''):
+        '''
+        Method to extract one or more data labels across all series from 
+        the current data frame into a new data frame.
+        
+        @param label_names: names of series to extract
+        @type label_names: list
+        @param new_dataframe_name: name for new data frame (that is to be 
+        returned)
+        @type new_dataframe_name: string
+        @return: dataframe.Dataframe object
+        '''
+        df = Dataframe(str(new_dataframe_name))
+        data = {}
+        for label in label_names:
+            try: data[label] = [x for x in self.data[label]]
+            except KeyError: pass
+        df.data = data
+        df.label = label_names
+        df.series_names = [x for x in self.series_names]
+        return df
     
     def _generateRandomName(self):
         '''
@@ -420,7 +442,72 @@ class Dataframe(object):
             s = Series(series[i])
             s.addData(data[i], labels)
             self.addSeries(s, fill_in)
-            
+    
+    def removeSeries(self, series_name):
+        '''
+        Method to remove / delete a data series from the current data 
+        frame.
+        
+        @param series_names: names of series to remove
+        @type series_names: string
+        '''
+        series_name = str(series_name)
+        try:
+            index = self.series_names.index(series_name)
+            self.series_names.pop(index)
+            for label in self.data.keys(): self.data[label].pop(index)
+        except: pass
+        
+    def popSeries(self, series_names, new_dataframe_name=''):
+        '''
+        Method to pop one or more series (extract one or more series from 
+        the current data frame into new data frame, followed by removing 
+        the extracted series from the current data frame).
+        
+        @param series_names: names of series to pop
+        @type series_names: list
+        @param new_dataframe_name: name for new data frame (that is to be 
+        returned)
+        @type new_dataframe_name: string
+        @return: dataframe.Dataframe object
+        '''
+        df = self.extractSeries(series_names, new_dataframe_name)
+        for series in series_names: self.removeSeries(series)
+        return df
+        
+    def removeLabel(self, label):
+        '''
+        Method to remove / delete a label across all data series from the 
+        current data frame.
+        
+        @param label: names of label to remove
+        @type label: string
+        '''
+        label = str(label)
+        try:
+            index = self.label.index(label)
+            self.label.pop(index)
+            del self.data[label]
+        except: pass
+        
+    def popLabels(self, label_names, new_dataframe_name=''):
+        '''
+        Method to pop one or more labels across all data series (extract 
+        one or more labels across all data series from the current data 
+        frame into new data frame, followed by removing the extracted 
+        labels from the current data frame).
+        
+        @param label_names: names of series to pop
+        @type label_names: list
+        @param new_dataframe_name: name for new data frame (that is to be 
+        returned)
+        @type new_dataframe_name: string
+        @return: dataframe.Dataframe object
+        '''
+        df = self.extractLabels(label_names, new_dataframe_name)
+        for label in label_names: self.removeLabel(label)
+        return df
+        
     def changeDatum(self, new_value, series, label):
         '''
         Method to change the data value of a series and label. If the 
