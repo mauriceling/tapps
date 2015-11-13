@@ -4,12 +4,13 @@ Template / Boiler plates for writing a TAPPS plugin.
 
 def main(parameters):
     '''
-    Entry function for the plugin.
+    Entry function for the plugin. This sample plugin will sum up the 
+    values in each data series within the data frame.
     
     @param parameters: set of parameters, including data frame, which are 
     needed for the plugin to execute
     @type parameters: dictionary
-    @return: session
+    @return: parameters
     @rtype: dictionary
     '''
     # Step 1: Pull out needed items / data from parameters dictionary
