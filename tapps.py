@@ -38,11 +38,14 @@ import plugins
 
 MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow()))
 
+resultsDF = Dataframe()
+
 parameters = \
 {'analysis_name': None,
  'plugin_name': None,
+ 'analytical_method': None,
  'dataframe': None,
- 'results': None,
+ 'results': resultsDF,
 }
 
 session = \
@@ -54,8 +57,6 @@ session = \
              'loaded': [],
              'template': [],
             },
- 'analyses': {
-             },
  'parameters': {
                },
  'MDF': MDF,
@@ -187,6 +188,22 @@ def LoadCSV(session, filepath, series_header=True, separator=',',
     '''
     session = e.LoadCSV(session, filepath, series_header, separator, 
                         fill_in, newline)
+    return session
+    
+def AttachNewDataFrame(session, dataframe_name):
+    '''
+    Function to move a new dataframe (in session['new_dataframe'], such 
+    as from LoadCSV function) to the main multi data frame object (in 
+    session['MDF']. 
+    
+    MDF will have a new dataframe while session['new_dataframe'] will be 
+    set to None.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param dataframe_name: new name for the dataframe to attach
+    '''
+    session = e.AttachDataFrame(session, dataframe_name)
     return session
     
 def RunShell(session):

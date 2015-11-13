@@ -254,3 +254,21 @@ def LoadCSV(session, filepath, series_header, separator, fill_in, newline):
     session['new_dataframe'] = dataframe
     return session
     
+def AttachNewDataFrame(session, dataframe_name):
+    '''
+    Function to move a new dataframe (in session['new_dataframe'], such 
+    as from LoadCSV function) to the main multi data frame object (in 
+    session['MDF']. 
+    
+    MDF will have a new dataframe while session['new_dataframe'] will be 
+    set to None.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param dataframe_name: new name for the dataframe to attach
+    '''
+    session['new_dataframe'].name = dataframe_name
+    session['MDF'].addDataframe(session['new_dataframe'], False)
+    session['new_dataframe'] = None
+    return session
+    
