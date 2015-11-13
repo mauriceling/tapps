@@ -188,13 +188,14 @@ def GetPlugins(session, path):
     return session
     
     
-def RunPlugin(session, session):
+def RunPlugin(session, parameter_name):
     '''
-    Function to run/execute a plugin using the parameters needed for the 
-    plugin and returning the execution results into session dictionary.
+    Function to run/execute a plugin using the parameters (sub-dictionary 
+    within session, under 'parameters' key) needed for the plugin and 
+    returning the execution results into session dictionary.
     
-    The parameters dictionary will need to contain values for the following 
-    keys:
+    The parameters sub-dictionary will need to contain values for the 
+    following keys:
         - analysis_name: user-given name for the analytical execution of 
         plugin
         - plugin_name: name of plugin to execute
@@ -203,24 +204,24 @@ def RunPlugin(session, session):
     and any other plugin-specific parameters/options.
     
     After execution, analysis results will be returned as value to 
-    'results' key in the parameters dictionary, and the entire parameters 
-    dictionary will be loaded into 'analysis' sub-dictionary within the 
-    session dictionary using the analysis_name as key.
+    'results' key in the parameters sub-dictionary.
     
-    Hence, session['analyses'][<analysis_name>] will hold the parameters 
-    dictionary.
+    Hence, session['parameters'][<parameter_name>] will hold the entire 
+    parameters sub-dictionary for the current plugin execution and 
+    session['parameters'][<parameter_name>]['results'] will hold the 
+    plugin output results.
     
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
-    @param parameters: dictionary to hold all the parameters needed to 
-    execute the plugin. Please see module documentation for more details.
+    @param parameter_name: name of parameter dictionary to hold all the 
+    parameters needed to execute the plugin. Please see module 
+    documentation for more details.
     @return: session dictionary
     '''
-    plugin_name = 'plugin_' + parameters['plugin_name']
-    results = session[plugin_name]['main'](parameters)
-    parameters['results'] = results
-    analysis_name = parameters['analysis_name']
-    session['analyses'][analysis_name] = parameters
+    plugin_name = 'plugin_' + \
+                  session['parameters'][parameter_name]['plugin_name']
+    results = session[plugin_name]['main'](session['parameters'][parameter_name])
+    session['parameters'][parameter_name]['results'] = results
     return session
     
  

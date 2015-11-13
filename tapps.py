@@ -34,10 +34,16 @@ import engine as e
 global session
 global MDF
 
+import plugins
 
 MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow()))
 
-import plugins
+parameters = \
+{'analysis_name': None,
+ 'plugin_name': None,
+ 'dataframe': None,
+ 'results': None,
+}
 
 session = \
 {'paths': {'cwd': os.getcwd(),
@@ -50,14 +56,11 @@ session = \
             },
  'analyses': {
              },
+ 'parameters': {
+               },
+ 'MDF': MDF,
 }
 
-parameters = \
-{'analysis_name': None,
- 'plugin_name': None,
- 'dataframe': None,
- 'results': None,
-}
 
 def startup(session):
     '''
@@ -120,14 +123,14 @@ def LoadPlugin(session, plugin):
     session = e.LoadPlugin(session, plugin)
     return session
     
-    
-def RunPlugin(session, parameters):
+def RunPlugin(session, parameter_name):
     '''
-    Function to run/execute a plugin using the parameters needed for the 
-    plugin and returning the execution results into session dictionary.
+    Function to run/execute a plugin using the parameters (sub-dictionary 
+    within session, under 'parameters' key) needed for the plugin and 
+    returning the execution results into session dictionary.
     
-    The parameters dictionary will need to contain values for the following 
-    keys:
+    The parameters sub-dictionary will need to contain values for the 
+    following keys:
         - analysis_name: user-given name for the analytical execution of 
         plugin
         - plugin_name: name of plugin to execute
@@ -136,22 +139,22 @@ def RunPlugin(session, parameters):
     and any other plugin-specific parameters/options.
     
     After execution, analysis results will be returned as value to 
-    'results' key in the parameters dictionary, and the entire parameters 
-    dictionary will be loaded into 'analysis' sub-dictionary within the 
-    session dictionary using the analysis_name as key.
+    'results' key in the parameters sub-dictionary.
     
-    Hence, session['analyses'][<analysis_name>] will hold the parameters 
-    dictionary.
+    Hence, session['parameters'][<parameter_name>] will hold the entire 
+    parameters sub-dictionary for the current plugin execution and 
+    session['parameters'][<parameter_name>]['results'] will hold the 
+    plugin output results.
     
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
-    @param parameters: dictionary to hold all the parameters needed to 
-    execute the plugin. Please see module documentation for more details.
+    @param parameter_name: name of parameter dictionary to hold all the 
+    parameters needed to execute the plugin. Please see module 
+    documentation for more details.
     @return: session dictionary
     '''
-    session = e.RunPlugin(session, parameters)
+    session = e.RunPlugin(session, parameter_name)
     return session
-    
     
 def LoadCSV(session, filepath, series_header=True, separator=',', 
             fill_in=None, newline='\n'):
@@ -186,8 +189,7 @@ def LoadCSV(session, filepath, series_header=True, separator=',',
                         fill_in, newline)
     return session
     
-    
-def RunShell(session, MDF):
+def RunShell(session):
     try:
         import readline
         readline_import = True
@@ -213,10 +215,9 @@ def RunShell(session, MDF):
         readline.parse_and_bind("tab: complete")
     shell.cmdloop()
     
-    
 session = startup(session)
 
 
 if __name__ == '__main__':
-    RunShell(session, MDF)
+    RunShell(session)
     sys.exit()
