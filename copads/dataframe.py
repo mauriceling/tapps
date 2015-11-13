@@ -15,15 +15,12 @@ class Series(object):
     Hence, the number of labels and the number of data elements must be 
     equal.
     
-    In itself, a data series can be viewed as a column of data in a data 
+    In itself, a data series can be viewed as a row of data in a data 
     table where the name of the series corresponds to the field name; such 
     as::
     
-        <Label>    Height
-        Tom        165
-        Ellis      191
-        Richard    172
-        Melvin     175
+                    Tom     Ellis   Richard     Melvin
+        Height      165     191     172         175
     '''
     def __init__(self, name=''):
         '''
@@ -36,6 +33,54 @@ class Series(object):
         self.data = []
         self.label = []
         self.analyses = {}
+    
+    def cast(self, type, error_replace):
+        '''
+        Method to cast data in the series into a specific data type.
+        
+        Allowable data types are:
+            1. integer (type == 'int' or 'integer')
+            2. float (type == 'real' or 'float')
+            3. string (type == 'str' or 'string')
+            
+        @param type: data type to cast into
+        @type type: string
+        @param error_replace: in event where there is a failure to cast 
+        the data element (such as attempt to cast a character into an 
+        integer, which will result ina ValueError), the data element will 
+        be replace with error_replace
+        '''
+        data = [0] * len(self.data)
+        type = str(type)
+        for i in range(len(self.data)):
+            try:
+                if type == 'int' or type == 'integer': 
+                    data[i] = int(self.data[i])
+                if type == 'real' or type == 'float':
+                    data[i] = float(self.data[i])
+                if type == 'str' or type == 'string':
+                    data[i] = str(self.data[i])
+            except:
+                data[i] = error_replace
+        self.data = data
+    
+    def toDataframe(self):
+        '''
+        Method to convert and return the current data series as a data 
+        frame object. The following will happen in the returned data frame 
+        object:
+            1. Name of the data frame will be the name of the current data 
+            series
+            2. Name of the series in the data frame will be the name of 
+            the current data series
+            3. Hence, name of the returned data frame and its data series 
+            will be the same
+            
+        @return: dataframe.Dataframe object
+        '''
+        df = Dataframe(self.name)
+        df.addSeries(self)
+        return df
         
     def addData(self, data, label=[]):
         '''
@@ -149,6 +194,95 @@ class Dataframe(object):
         self.data = {}
         self.label = []
         self.analyses = {}
+    
+    def cast(self, type, error_replace, series_name='all'):
+        '''
+        Method to cast data in the one or all series into a specific data 
+        type.
+        
+        Allowable data types are:
+            1. integer (type == 'int' or 'integer')
+            2. float (type == 'real' or 'float')
+            3. string (type == 'str' or 'string')
+            
+        @param type: data type to cast into
+        @type type: string
+        @param error_replace: in event where there is a failure to cast 
+        the data element (such as attempt to cast a character into an 
+        integer, which will result ina ValueError), the data element will 
+        be replace with error_replace
+        @param series_name: series name to cast values into a specific 
+        data type. If 'all', the entire data frame (all data series) will 
+        be type casted. Default = 'all'
+        '''
+        if series_name != 'all':
+            try:
+                index = self.series_names.index(series_name)
+            except:
+                return 0
+        if series_name == 'all':
+            for k in self.data.keys():
+                data = [0] * len(self.data[k])
+                type = str(type)
+                for i in range(len(self.data[k])):
+                    try:
+                        if type == 'int' or type == 'integer': 
+                            data[i] = int(self.data[k][i])
+                        if type == 'real' or type == 'float':
+                            data[i] = float(self.data[k][i])
+                        if type == 'str' or type == 'string':
+                            data[i] = str(self.data[k][i])
+                    except:
+                        data[i] = error_replace
+                self.data[k] = data
+        else:
+            for k in self.data.keys():
+                try:
+                    if type == 'int' or type == 'integer': 
+                        self.data[k][index] = int(self.data[k][index])
+                    if type == 'real' or type == 'float':
+                         self.data[k][index] = float(self.data[k][index])
+                    if type == 'str' or type == 'string':
+                         self.data[k][index] = str(self.data[k][index])
+                except:
+                     self.data[k][index] = error_replace
+        
+    def toSeries(self, series_name):
+        '''
+        Method to extract a series within the current data frame into a 
+        Series object.
+        
+        @param series_name: name of series to extract
+        @type series_name: string
+        @return: dataframe.Series object
+        '''
+        series_name = str(series_name)
+        s = Series(series_name)
+        try:
+            index = self.series_names.index(series_name)
+            data = [self.data[k][index] for k in self.data.keys()]
+            s.addData(data, self.label)
+            return s
+        except ValueError, KeyError: 
+            return s
+    
+    def extractSeries(self, series_names, new_dataframe_name=''):
+        '''
+        Method to extract one or more series from the current data frame 
+        into a new data frame.
+        
+        @param series_names: names of series to extract
+        @type series_names: list
+        @param new_dataframe_name: name for new data frame (that is to be 
+        returned)
+        @type new_dataframe_name: string
+        @return: dataframe.Dataframe object
+        '''
+        df = Dataframe(str(new_dataframe_name))
+        for series in series_names:
+            s = self.toSeries(series)
+            df.addSeries(s)
+        return df
     
     def _generateRandomName(self):
         '''
