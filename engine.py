@@ -249,7 +249,7 @@ def LoadCSV(session, filepath, series_header, separator, fill_in, newline):
     @param newline: character to denote new line or line feed in the 
     CSV file.
     '''
-    dataframe = DataFrame(filepath)
+    dataframe = Dataframe(filepath)
     dataframe.addCSV(filepath, series_header, separator, fill_in, newline)
     session['new_dataframe'] = dataframe
     return session
