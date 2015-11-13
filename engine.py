@@ -22,6 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import sys
 
+import copads
+from copads.dataframe import Series
+from copads.dataframe import Dataframe
+from copads.dataframe import MultiDataframe
+
+
 plugin_categories = ['template']
 
 def loadPlugin(plugin, session):
@@ -126,7 +132,7 @@ def loadPlugin(plugin, session):
                                             'URL': URL,
                                             'contact': contact,
                                             'license': license}
-    return (session, checks)
+    return session
 
 
 def getPlugins(path, session):
@@ -146,7 +152,7 @@ def getPlugins(path, session):
     '''
     plugin_directories = [x for x in os.walk(path)][0][1]
     for plugin in plugin_directories:
-        (session, checks) = loadPlugin(plugin, session)
+        session = loadPlugin(plugin, session)
     for category in plugin_categories:
         plugin_list = session['plugins'][category]
         plugin_list = list(set(plugin_list))
@@ -154,7 +160,18 @@ def getPlugins(path, session):
     return session
     
     
-def RunPlugin(plugin_name, parameters, session):
-    plugin_name = 'plugin_' + plugin_name
+def RunPlugin(parameters, session):
+    plugin_name = 'plugin_' + parameters['plugin_name']
     results = session[plugin_name]['main'](parameters)
-    return results
+    parameters['results'] = results
+    analysis_name = parameters['analysis_name']
+    session['analyses'][analysis_name] = parameters
+    return session
+    
+ 
+def LoadCSV(filepath, series_header, separator, fill_in, newline):
+    dataframe = DataFrame(filepath)
+    dataframe.addCSV(filepath, series_header, separator, fill_in, newline)
+    session['new_dataframe'] = dataframe
+    return session
+    

@@ -30,13 +30,10 @@ from copads.dataframe import MultiDataframe
 
 import commandshell
 import engine as e
-import startup
 
 global session
 global MDF
 
-session = startup.session
-session = startup.startup(session)
 
 MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow()))
 
@@ -44,6 +41,7 @@ import plugins
 
 session = \
 {'paths': {'cwd': os.getcwd(),
+           'data': os.sep.join([os.getcwd(), 'data']),
            'plugins': os.sep.join([os.getcwd(), 'plugins']),
           },
  'plugins': {'loadFail': {},
@@ -54,8 +52,13 @@ session = \
              },
 }
 
+parameters = \
+{'analysis_name': None,
+ 'plugin_name': None,
+ 'results': None,
+}
 
-def startup(session=session):
+def startup(session):
     '''
     Main function to execute all startup routines, which includes the 
     following:
@@ -69,8 +72,16 @@ def startup(session=session):
     return session
     
     
-def RunPlugin(plugin_name, parameters, session):
-    return e.RunPlugin(plugin_name, parameters, session)
+def RunPlugin(parameters, session):
+    session = e.RunPlugin(parameters, session)
+    return session
+    
+    
+def LoadCSV(filepath, series_header=True, separator=',', 
+            fill_in=None, newline='\n'):
+    session = e.LoadCSV(filepath, series_header, separator, 
+                        fill_in, newline)
+    return session
     
     
 def RunShell(MDF, session):
@@ -100,6 +111,9 @@ def RunShell(MDF, session):
     shell.cmdloop()
     
     
+session = startup(session)
+
+
 if __name__ == '__main__':
     RunShell(MDF, session)
     sys.exit()
