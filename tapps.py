@@ -200,6 +200,9 @@ def AttachNewDataFrame(session, dataframe_name):
     session = e.AttachNewDataFrame(session, dataframe_name)
     return session
     
+def NewPluginParameters(session, plugin_name=''):
+    return e.NewPluginParameters(session, plugin_name)
+    
 def RunShell(session):
     try:
         import readline

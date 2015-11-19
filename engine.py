@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import sys
+import copy
 
 import copads
 from copads.dataframe import Series
@@ -301,4 +302,11 @@ def AttachNewDataFrame(session, dataframe_name):
     session['MDF'].addDataframe(session['new_dataframe'], False)
     session['new_dataframe'] = None
     return session
+    
+def NewPluginParameters(session, plugin_name=''):
+    if plugin_name == '':
+        return copy.deepcopy(parameters)
+    else:
+        plugin_name = 'plugin_' + plugin_name
+        return copy.deepcopy(session[plugin_name]['parameters'])
     
