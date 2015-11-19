@@ -2,6 +2,20 @@
 Template / Boiler plates for writing a TAPPS plugin.
 '''
 
+instructions = '''
+Provides user readable instructions on what the operations of the current 
+plugin, how to fill-in the parameters dictionary, and what options are 
+required/allowed by the plugin.
+'''
+
+parameters = \
+{'analysis_name': None,
+ 'plugin_name': None,
+ 'analytical_method': None,
+ 'dataframe': None,
+ 'results': None,
+}
+
 def main(parameters):
     '''
     Entry function for the plugin. This sample plugin will sum up the 

@@ -40,19 +40,22 @@ def LoadPlugin(session, plugin):
         Python module with __init__.py file)
         2. Able to import plugin manifest (check for presence of manifest 
         file: <plugin module>/manifest.py)
-        3. Able to import main function, which is the plugin entry 
+        3. Able to import parameters dictionary from 
+        <plugin module>/main.py file
+        4. Able to import main function, which is the plugin entry 
         function, from <plugin module>/main.py file
-        4. Check for presence of plugin's name in manifest file
-        5. Check for presence of plugin's release (version number) in 
+        5. Able to import instructions from <plugin module>/main.py file
+        6. Check for presence of plugin's name in manifest file
+        7. Check for presence of plugin's release (version number) in 
         manifest file
-        6. Check for valid category in manifest file
-        7. Check for presence of plugin's short description in manifest 
+        8. Check for valid category in manifest file
+        9. Check for presence of plugin's short description in manifest 
         file
-        8. Check for presence of plugin's long description in manifest file
-        9. Check for presence of plugin's URL in manifest file
-        10. Check for presence of plugin author(s)' contact(s) in manifest 
+        10. Check for presence of plugin's long description in manifest file
+        11. Check for presence of plugin's URL in manifest file
+        12. Check for presence of plugin author(s)' contact(s) in manifest 
         file
-        11. Check for presence of plugin's license in manifest file
+        13. Check for presence of plugin's license in manifest file
     
     The following changes will be made to session dictionary:
         1. If plugin is successfully loaded, the plugin name will be 
@@ -77,7 +80,9 @@ def LoadPlugin(session, plugin):
     '''
     checks = ['ImportError:Plugin',
               'ImportError:Manifest',
+              'ImportError:Parameters',
               'ImportError:MainFunction',
+              'MainError:NoInstructions',
               'ManifestError:NoName',
               'ManifestError:NoRelease',
               'ManifestError:InvalidCategory',
@@ -95,50 +100,61 @@ def LoadPlugin(session, plugin):
         checks[1] = 'Passed'
     except: pass
     try: 
-        exec('from plugins.%s.main import %s' % (plugin, 'main'))
+        exec('from plugins.%s.main import %s' % (plugin, 'parameters'))
         checks[2] = 'Passed'
+    except: pass
+    try: 
+        exec('from plugins.%s.main import %s' % (plugin, 'main'))
+        checks[3] = 'Passed'
+    except: pass
+    try: 
+        exec('from plugins.%s.main import %s' % (plugin, 'instructions'))
+        checks[4] = 'Passed'
     except: pass
     try: 
         plugin_name = manifest.name
         if plugin_name != '':
-            checks[3] = 'Passed'
+            checks[5] = 'Passed'
     except: pass
     try:
         release = manifest.release
-        checks[4] = 'Passed'
+        checks[6] = 'Passed'
     except: pass
     try:
         category = manifest.category
         if category in plugin_categories:
-            checks[5] = 'Passed'
+            checks[7] = 'Passed'
     except: pass
     try:
         sDesc = manifest.shortDescription
-        checks[6] = 'Passed'
-    except: pass
-    try:
-        lDesc = manifest.longDescription
-        checks[7] = 'Passed'
-    except: pass
-    try:
-        URL = manifest.projectURL
         checks[8] = 'Passed'
     except: pass
     try:
-        contact = manifest.contactDetails
+        lDesc = manifest.longDescription
         checks[9] = 'Passed'
     except: pass
     try:
-        license = manifest.license
+        URL = manifest.projectURL
         checks[10] = 'Passed'
+    except: pass
+    try:
+        contact = manifest.contactDetails
+        checks[11] = 'Passed'
+    except: pass
+    try:
+        license = manifest.license
+        checks[12] = 'Passed'
     except: pass
     pass_rate = float(len([x for x in checks if x == 'Passed'])) / float(len(checks))
     if pass_rate < 1.0:
         session['plugins']['loadFail'][plugin] = checks
     else:
+        parameters['results'] = Dataframe()
         session['plugins']['loaded'].append(plugin_name)
         session['plugins'][category].append(plugin_name)
         session['plugin_' + plugin_name] = {'main': main,
+                                            'parameters': parameters,
+                                            'instructions': instructions,
                                             'release': release,
                                             'sdesc': sDesc,
                                             'ldesc': lDesc,
