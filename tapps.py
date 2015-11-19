@@ -203,7 +203,7 @@ def AttachNewDataFrame(session, dataframe_name):
     Please see module documentation for more details.
     @param dataframe_name: new name for the dataframe to attach
     '''
-    session = e.AttachDataFrame(session, dataframe_name)
+    session = e.AttachNewDataFrame(session, dataframe_name)
     return session
     
 def RunShell(session):
