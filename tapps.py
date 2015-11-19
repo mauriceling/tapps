@@ -73,6 +73,7 @@ def startup(session):
     Please see module documentation for more details.
     @return: session dictionary
     '''
+    sys.path = e.SetPaths(session)
     session = e.GetPlugins(session, session['paths']['plugins'])
     return session
     
