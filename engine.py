@@ -28,6 +28,14 @@ from copads.dataframe import Dataframe
 from copads.dataframe import MultiDataframe
 
 
+parameters = \
+{'analysis_name': None,
+ 'plugin_name': None,
+ 'analytical_method': None,
+ 'dataframe': None,
+ 'results': Dataframe(),
+}
+
 plugin_categories = ['template']
 
 def SetPaths(session):

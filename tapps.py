@@ -38,16 +38,6 @@ import plugins
 
 MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow()))
 
-resultsDF = Dataframe()
-
-parameters = \
-{'analysis_name': None,
- 'plugin_name': None,
- 'analytical_method': None,
- 'dataframe': None,
- 'results': resultsDF,
-}
-
 session = \
 {'paths': {'cwd': os.getcwd(),
            'data': os.sep.join([os.getcwd(), 'data']),
