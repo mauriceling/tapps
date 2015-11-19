@@ -87,19 +87,22 @@ def LoadPlugin(session, plugin_name):
         Python module with __init__.py file)
         2. Able to import plugin manifest (check for presence of manifest 
         file: <plugin module>/manifest.py)
-        3. Able to import main function, which is the plugin entry 
+        3. Able to import parameters dictionary from 
+        <plugin module>/main.py file
+        4. Able to import main function, which is the plugin entry 
         function, from <plugin module>/main.py file
-        4. Check for presence of plugin's name in manifest file
-        5. Check for presence of plugin's release (version number) in 
+        5. Able to import instructions from <plugin module>/main.py file
+        6. Check for presence of plugin's name in manifest file
+        7. Check for presence of plugin's release (version number) in 
         manifest file
-        6. Check for valid category in manifest file
-        7. Check for presence of plugin's short description in manifest 
+        8. Check for valid category in manifest file
+        9. Check for presence of plugin's short description in manifest 
         file
-        8. Check for presence of plugin's long description in manifest file
-        9. Check for presence of plugin's URL in manifest file
-        10. Check for presence of plugin author(s)' contact(s) in manifest 
+        10. Check for presence of plugin's long description in manifest file
+        11. Check for presence of plugin's URL in manifest file
+        12. Check for presence of plugin author(s)' contact(s) in manifest 
         file
-        11. Check for presence of plugin's license in manifest file
+        13. Check for presence of plugin's license in manifest file
     
     The following changes will be made to session dictionary:
         1. If plugin is successfully loaded, the plugin name will be 
