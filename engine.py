@@ -37,7 +37,11 @@ parameters = \
  'results': Dataframe(),
 }
 
-plugin_categories = ['template']
+plugin_categories = ['statistics',
+                     'statistics.hypothesis',
+                     'statistics.model',
+                     'statistics.timeseries',
+                     'unclassified']
 
 def SetPaths(session):
     sys.path.append(os.sep.join([session['paths']['cwd'], 'plugins']))
@@ -207,7 +211,7 @@ def GetPlugins(session, path):
     @type path: string
     @return: session dictionary
     '''
-    print path, [x for x in os.walk(path)]
+    # print path, [x for x in os.walk(path)]
     plugin_directories = [x for x in os.walk(path)][0][1]
     for plugin in plugin_directories:
         session = LoadPlugin(session, plugin)

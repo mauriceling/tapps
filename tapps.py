@@ -28,7 +28,7 @@ from copads.dataframe import Series
 from copads.dataframe import Dataframe
 from copads.dataframe import MultiDataframe
 
-import commandshell
+import shell as s
 import engine as e
 
 global session
@@ -45,7 +45,11 @@ session = \
           },
  'plugins': {'loadFail': {},
              'loaded': [],
-             'template': [],
+             'statistics': [],
+             'statistics.hypothesis': [],
+             'statistics.model': [],
+             'statistics.timeseries': [],
+             'unclassified': [],
             },
  'parameters': {
                },
@@ -204,29 +208,7 @@ def NewPluginParameters(session, plugin_name=''):
     return e.NewPluginParameters(session, plugin_name)
     
 def RunShell(session):
-    try:
-        import readline
-        readline_import = True
-        pyreadline_import = False
-    except ImportError:
-        readline_import = False
-        try:
-            import pyreadline as readline
-            pyreadline_import = True
-        except ImportError:
-            readline_import = False
-            pyreadline_import = False
-    shell = commandshell.Shell()
-    shell.header()
-    if readline_import:
-        shell.environment['readline_module'] = 'readline'
-    elif pyreadline_import:
-        shell.environment['readline_module'] = 'pyreadline'
-    else:
-        shell.environment['readline_module'] = None
-    if readline_import or pyreadline_import:
-        readline.set_completer(shell.completer)   # enables autocompletion
-        readline.parse_and_bind("tab: complete")
+    shell = s.Shell(session)
     shell.cmdloop()
     
 session = startup(session)

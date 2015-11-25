@@ -16,8 +16,12 @@ release = 1
 
 # Category which this plugin / app should belong to (mandatory)
 # Allowed categories are:
-# 1. optimizer 
-category = 'template'
+# 1. statistics
+# 2. statistics.hypothesis
+# 3. statistics.model
+# 4. statistics.timeseries
+# - unclassified
+category = 'unclassified'
 
 # A short description of the plugin / app (not mandatory)
 shortDescription = '''
