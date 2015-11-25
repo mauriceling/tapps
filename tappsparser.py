@@ -43,8 +43,6 @@ class TAPPSParser(object):
         statement : set_statement
                   | load_statement
                   | show_statement
-                  | insert_statement
-                  | select_statement
         '''
         p[0] = p[1]
     
@@ -66,13 +64,48 @@ class TAPPSParser(object):
             
     def p_show_statement(self, p):
         '''
-        show_statement : SHOW ID SEMICOLON
-                       | SHOW ID
+        show_statement : SHOW ASTHISTORY SEMICOLON
+                       | SHOW ASTHISTORY
+                       | SHOW ENVIRONMENT SEMICOLON
+                       | SHOW ENVIRONMENT
+                       | SHOW HISTORY SEMICOLON
+                       | SHOW HISTORY
         '''
-        if p[2].lower() == 'history': p[0] = ('show', 'history')
+        if p[2].lower() == 'asthistory': p[0] = ('show', 'asthistory')
         if p[2].lower() == 'environment': p[0] = ('show', 'environment')
+        if p[2].lower() == 'history': p[0] = ('show', 'history')
         
-    def p_insert_statement(self, p):
+        
+    def p_error(self, p):
+        print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
+    
+    def build(self, **kwargs):
+        self.parser = yacc.yacc(module=self, **kwargs)
+
+    def parse(self, statement, print_ast=False):
+        result = self.parser.parse(statement, lexer=self.lexer)
+        if print_ast: print "parse result -> ", result
+        return result
+        
+    def test(self):
+        while True:
+            text = raw_input('TAPPS:> ').strip() 
+            if text.lower() in ['exit', 'quit']: return 0
+            if text: self.parse(text, True)
+        
+        
+def unittest_parser():
+    p = TAPPSParser()
+    p.build()
+    p.test()
+    
+if __name__ == "__main__":    
+    #unittest_lexer()
+    unittest_parser()
+    
+               
+"""
+def p_insert_statement(self, p):
         # TODO: support extension: insert into X (a,b,c) VALUES (a1,b1,c1), (a2,b2,c2), ...
         '''
         insert_statement : INSERT ID LPAREN id_list RPAREN VALUES LPAREN expr_list RPAREN
@@ -257,32 +290,4 @@ class TAPPSParser(object):
             p[0] = p[1]
         else:
             p[0] = p[2] 
-    
-    def p_error(self, p):
-        print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
-    
-    def build(self, **kwargs):
-        self.parser = yacc.yacc(module=self, **kwargs)
-
-    def parse(self, statement, print_ast=False):
-        result = self.parser.parse(statement, lexer=self.lexer)
-        if print_ast: print "parse result -> ", result
-        return result
-        
-    def test(self):
-        while True:
-            text = raw_input('TAPPS:> ').strip() 
-            if text.lower() in ['exit', 'quit']: return 0
-            if text: self.parse(text, True)
-        
-        
-def unittest_parser():
-    p = TAPPSParser()
-    p.build()
-    p.test()
-    
-if __name__ == "__main__":    
-    #unittest_lexer()
-    unittest_parser()
-    
-                
+            """
