@@ -26,6 +26,7 @@ class TAPPSLexer(object):
     reserved = {'as': 'AS',
                 'asthistory': 'ASTHISTORY',
                 'csv': 'CSV',
+                'cwd': 'CWD',
                 'displayast': 'DISPLAYAST',
                 'environment': 'ENVIRONMENT',
                 'history': 'HISTORY',

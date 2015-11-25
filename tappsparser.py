@@ -50,9 +50,11 @@ class TAPPSParser(object):
         '''
         set_statement : SET DISPLAYAST ID SEMICOLON
                       | SET DISPLAYAST ID
+                      | SET CWD FOLDER SEMICOLON
+                      | SET CWD FOLDER
         '''
-        if p[2].lower() == 'displayast':
-            p[0] = ('set', 'displayast', p[3])
+        if p[2].lower() == 'displayast': p[0] = ('set', 'displayast', p[3])
+        if p[2].lower() == 'cwd': p[0] = ('set', 'cwd', p[3])
             
     def p_load_statement(self, p):
         '''

@@ -103,6 +103,12 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                 self.environment['display_ast'] = True
             if operand[1].lower() in ['f', 'false']:
                 self.environment['display_ast'] = False
+        if op == 'cwd':
+            self.environment['cwd'] = operand[1]
+            self.session['paths']['cwd'] = operand[1]
+            self.session['paths']['data'] = os.sep.join([operand[1], 'data'])
+            self.session['paths']['plugins'] = os.sep.join([operand[1], 'plugins'])
+        return None
     
     def show_environment(self):
         environment = self.environment.keys()
