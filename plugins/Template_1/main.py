@@ -9,7 +9,7 @@ required/allowed by the plugin.
 '''
 
 parameters = \
-{'plugin_name': 'Template',
+{'plugin_name': 'template',
  'analysis_name': None,
  'analytical_method': None,
  'dataframe': None,
