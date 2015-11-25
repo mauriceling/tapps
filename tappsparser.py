@@ -74,8 +74,10 @@ class TAPPSParser(object):
                        | SHOW HISTORY
                        | SHOW PLUGIN LIST SEMICOLON
                        | SHOW PLUGIN LIST 
-                       | SHOW PLUGIN ID
                        | SHOW PLUGIN ID SEMICOLON
+                       | SHOW PLUGIN ID 
+                       | SHOW SESSION SEMICOLON
+                       | SHOW SESSION
         '''
         if p[2].lower() == 'asthistory': p[0] = ('show', 'asthistory')
         if p[2].lower() == 'environment': p[0] = ('show', 'environment')
@@ -83,6 +85,7 @@ class TAPPSParser(object):
         if p[2].lower() == 'plugin': 
             if p[3].lower() == 'list': p[0] = ('show', 'pluginlist')
             else: p[0] = ('show', 'plugindata', p[3])
+        if p[2].lower() == 'session': p[0] = ('show', 'session')
         
         
     def p_error(self, p):

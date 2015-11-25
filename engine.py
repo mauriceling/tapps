@@ -44,8 +44,8 @@ plugin_categories = ['statistics',
                      'unclassified']
 
 def SetPaths(session):
-    sys.path.append(os.sep.join([session['paths']['cwd'], 'plugins']))
-    sys.path.append(os.sep.join([session['paths']['cwd'], 'copads']))
+    sys.path.append(os.sep.join([session['cwd'], 'plugins']))
+    sys.path.append(os.sep.join([session['cwd'], 'copads']))
     return sys.path
 
 def LoadPlugin(session, plugin):

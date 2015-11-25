@@ -105,9 +105,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                 self.environment['display_ast'] = False
         if op == 'cwd':
             self.environment['cwd'] = operand[1]
-            self.session['paths']['cwd'] = operand[1]
-            self.session['paths']['data'] = os.sep.join([operand[1], 'data'])
-            self.session['paths']['plugins'] = os.sep.join([operand[1], 'plugins'])
+            self.session['cwd'] = operand[1]
         return None
     
     def show_environment(self):
@@ -179,6 +177,12 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         else:
             return None
         
+    def show_session(self):
+        print('')
+        print('Session Attributes:')
+        pprint(self.session)
+        return None
+        
     def do_show(self, operand):
         op = operand[0].lower()
         if op == 'asthistory': return self.show_asthistory()
@@ -186,6 +190,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if op == 'environment': return self.show_environment()
         if op == 'pluginlist': return self.show_pluginlist()
         if op == 'plugindata': return self.show_plugindata(operand)
+        if op == 'session': return self.show_session()
             
     def command_processor(self, operator, operand):
         if operator == 'set': self.do_set(operand)

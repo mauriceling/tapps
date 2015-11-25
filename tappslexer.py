@@ -33,6 +33,7 @@ class TAPPSLexer(object):
                 'list': 'LIST',
                 'load': 'LOAD',
                 'plugin': 'PLUGIN',
+                'session': 'SESSION',
                 'set': 'SET',
                 'show': 'SHOW',
        # 'insert' : 'INSERT', 

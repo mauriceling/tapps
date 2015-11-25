@@ -39,10 +39,7 @@ import plugins
 MDF = MultiDataframe('TAPPS_' + str(datetime.utcnow()))
 
 session = \
-{'paths': {'cwd': os.getcwd(),
-           'data': os.sep.join([os.getcwd(), 'data']),
-           'plugins': os.sep.join([os.getcwd(), 'plugins']),
-          },
+{'cwd': os.getcwd(),
  'plugins': {'loadFail': {},
              'loaded': [],
              'statistics': [],
@@ -68,7 +65,7 @@ def startup(session):
     @return: session dictionary
     '''
     sys.path = e.SetPaths(session)
-    session = e.GetPlugins(session, session['paths']['plugins'])
+    session = e.GetPlugins(session, os.sep.join([session['cwd'], 'plugins']))
     return session
     
 def LoadPlugin(session, plugin_name):
