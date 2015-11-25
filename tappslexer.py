@@ -28,6 +28,7 @@ class TAPPSLexer(object):
                 'displayast': 'DISPLAYAST',
                 'load': 'LOAD',
                 'set': 'SET',
+                'show': 'SHOW',
        'insert' : 'INSERT', 
        'into'   : 'INTO',
        'select' : 'SELECT',

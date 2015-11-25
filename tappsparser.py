@@ -42,27 +42,35 @@ class TAPPSParser(object):
         '''
         statement : set_statement
                   | load_statement
+                  | show_statement
                   | insert_statement
                   | select_statement
         '''
-        p[0] = [p[1]]
+        p[0] = p[1]
     
     def p_set_statement(self, p):
         '''
-        set_statement : SET DISPLAYAST AS ID SEMICOLON
-                      | SET DISPLAYAST AS ID
+        set_statement : SET DISPLAYAST ID SEMICOLON
+                      | SET DISPLAYAST ID
         '''
         if p[2].lower() == 'displayast':
-            p[0] = ('set', 'displayast', p[4])
+            p[0] = ('set', 'displayast', p[3])
             
     def p_load_statement(self, p):
         '''
-        load_statement : LOAD CSV ID AS ID SEMICOLON
-                       | LOAD CSV ID AS ID
+        load_statement : LOAD CSV FILENAME AS ID SEMICOLON
+                       | LOAD CSV FILENAME AS ID
         '''
         if p[2].lower() == 'csv':
             p[0] = ('loadcsv', p[3], p[5])
             
+    def p_show_statement(self, p):
+        '''
+        show_statement : SHOW ID SEMICOLON
+                       | SHOW ID
+        '''
+        if p[2].lower() == 'history': p[0] = ('show', 'history')
+        if p[2].lower() == 'environment': p[0] = ('show', 'environment')
         
     def p_insert_statement(self, p):
         # TODO: support extension: insert into X (a,b,c) VALUES (a1,b1,c1), (a2,b2,c2), ...

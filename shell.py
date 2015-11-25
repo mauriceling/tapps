@@ -32,7 +32,8 @@ from tappsparser import TAPPSParser
 
 class Shell(object):
     
-    def __init__(self):
+    def __init__(self, session=''):
+        self.session = session
         self.parser = TAPPSParser()
         self.parser.build()
         self.history = {}
@@ -87,7 +88,22 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         for line in license: print(line)
         print('')
         return None
-
+        
+    def intercept_processor(self, statement):
+        if statement == 'copyright': return self.do_copyright()
+        if statement == 'credits': return self.do_credits()
+        if statement == 'exit': return 'exit'
+        if statement == 'license': return self.do_license()
+        if statement == 'quit': return 'exit'
+        
+    def do_set(self, operand):
+        op = operand[0].lower()
+        if op == 'displayast':
+            if operand[1].lower() in ['t', 'true']:
+                self.environment['display_ast'] = True
+            if operand[1].lower() in ['f', 'false']:
+                self.environment['display_ast'] = False
+    
     def show_environment(self):
         environment = self.environment.keys()
         environment.sort()
@@ -107,24 +123,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         print('')
         return None
         
-    def intercept_processor(self, statement):
-        if statement == 'copyright': return self.do_copyright()
-        if statement == 'credits': return self.do_credits()
-        if statement == 'exit': return 'exit'
-        if statement == 'license': return self.do_license()
-        if statement == 'quit': return 'exit'
-        if statement == 'show environment': return self.show_environment()
-        if statement == 'show history': return self.show_history()
-        
-    def do_set(self, operand):
-        if operand[0] == 'displayast':
-            if operand[1].lower() in ['t', 'true']:
-                self.environment['display_ast'] = True
-            if operand[1].lower() in ['f', 'false']:
-                self.environment['display_ast'] = False
-    
+    def do_show(self, operand):
+        op = operand[0].lower()
+        if op == 'history': return self.show_history()
+        if op == 'environment': return self.show_environment()
+            
     def command_processor(self, operator, operand):
         if operator == 'set': self.do_set(operand)
+        if operator == 'show': self.do_show(operand)
         
     def cmdloop(self):
         self.header()
@@ -133,19 +139,17 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             try:
                 statement = raw_input('TAPPS: %s> ' % str(count)).strip() 
                 self.history[str(count)] = statement
-                if statement.lower() in ['copyright', 
-                                         'credits', 
-                                         'exit', 
-                                         'license',
-                                         'quit',
-                                         'show environment',
-                                         'show history']:
+                if statement.lower() in ['copyright', 'copyright;',
+                                         'credits', 'credits;',
+                                         'exit', 'exit;',
+                                         'license', 'license;',
+                                         'quit', 'quit;',
+                                        ]:
                      state = self.intercept_processor(statement)
                      if state == 'exit': return 0
                 else:
                     bytecode = self.parser.parse(statement, 
                                                  self.environment['display_ast'])
-                    bytecode = bytecode[0]
                     self.bytecode[str(count)] = bytecode
                     operator = bytecode[0]
                     if len(bytecode) == 1: 
@@ -160,6 +164,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                     if (type(line) == list):
                         for l in line: 
                             print(l)
+        return self.session
             
        
     
