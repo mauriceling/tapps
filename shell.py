@@ -131,12 +131,37 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             print('Command #%s : %s' % (str(i), self.history[str(i)]))
         print('')
         return None
+    
+    def show_pluginlist(self):
+         names = self.session['plugins']['loaded']
+         print('')
+         print('Loaded Plugins (n = %s): ' % str(len(names)))
+         for n in names: 
+             print('  %s ; Release = %s' % 
+                    (str(n), 
+                     self.session['plugin_' + n]['release']))
+         print('')
+         for c in e.plugin_categories:
+             numplugin = len(self.session['plugins'][c])
+             print('Plugin Category: %s (n = %s)' % (str(c), str(numplugin)))
+             listing = ' ; '.join(self.session['plugins'][c])
+             print('    %s' % listing)
+             print('')
+         return None
+        
+    def show_plugindata(self, operand):
+        if len(operand) == 2:
+            plugin_name = operand[1]
+        else:
+            return None
         
     def do_show(self, operand):
         op = operand[0].lower()
         if op == 'asthistory': return self.show_asthistory()
         if op == 'history': return self.show_history()
         if op == 'environment': return self.show_environment()
+        if op == 'pluginlist': return self.show_pluginlist()
+        if op == 'plugindata': return self.show_plugindata(operand)
             
     def command_processor(self, operator, operand):
         if operator == 'set': self.do_set(operand)

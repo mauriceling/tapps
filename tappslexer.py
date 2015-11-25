@@ -29,21 +29,23 @@ class TAPPSLexer(object):
                 'displayast': 'DISPLAYAST',
                 'environment': 'ENVIRONMENT',
                 'history': 'HISTORY',
+                'list': 'LIST',
                 'load': 'LOAD',
+                'plugin': 'PLUGIN',
                 'set': 'SET',
                 'show': 'SHOW',
-       'insert' : 'INSERT', 
-       'into'   : 'INTO',
-       'select' : 'SELECT',
-       'from'   : 'FROM',
-       'where'  : 'WHERE',
-       'order'  : 'ORDER',
-       'by'     : 'BY',
-       'values' : 'VALUES',
-       'and'    : 'AND',
-       'or'     : 'OR',
-       'not'    : 'NOT',
-    } 
+       # 'insert' : 'INSERT', 
+       # 'into'   : 'INTO',
+       # 'select' : 'SELECT',
+       # 'from'   : 'FROM',
+       # 'where'  : 'WHERE',
+       # 'order'  : 'ORDER',
+       # 'by'     : 'BY',
+       # 'values' : 'VALUES',
+       # 'and'    : 'AND',
+       # 'or'     : 'OR',
+       # 'not'    : 'NOT',
+                } 
               
     tokens = ['NUMBER',
               'FOLDER',
@@ -52,13 +54,18 @@ class TAPPSLexer(object):
               'STRING',
               'COMMA', 
               'SEMICOLON',
-              'PLUS', 
-              'MINUS',
-              'TIMES',      'DIVIDE',
-              'LPAREN',     'RPAREN',
-              'GT',         'GE',
-              'LT',         'LE',
-              'EQ',         'NE', 
+              # 'PLUS', 
+              # 'MINUS',
+              # 'TIMES',      
+              # 'DIVIDE',
+              # 'LPAREN',     
+              # 'RPAREN',
+              # 'GT', 
+              # 'GE',
+              # 'LT',
+              # 'LE',
+              # 'EQ',
+              # 'NE', 
               ] + list(reserved.values())
     
     def t_NUMBER(self, t):
@@ -104,18 +111,18 @@ class TAPPSLexer(object):
     # Regular expression rules for simple tokens
     t_COMMA = r'\,'
     t_SEMICOLON = r';'
-    t_PLUS = r'\+'
-    t_MINUS = r'-'
-    t_TIMES = r'\*'
-    t_DIVIDE = r'/'
-    t_LPAREN = r'\('
-    t_RPAREN = r'\)'
-    t_GT = r'>'
-    t_GE = r'>='
-    t_LT = r'<'
-    t_LE = r'<='
-    t_EQ = r'='
-    t_NE = r'!='
+    # t_PLUS = r'\+'
+    # t_MINUS = r'-'
+    # t_TIMES = r'\*'
+    # t_DIVIDE = r'/'
+    # t_LPAREN = r'\('
+    # t_RPAREN = r'\)'
+    # t_GT = r'>'
+    # t_GE = r'>='
+    # t_LT = r'<'
+    # t_LE = r'<='
+    # t_EQ = r'='
+    # t_NE = r'!='
     
     def t_error(self, t):
         raise TypeError("Unknown text '%s'" % (t.value,))

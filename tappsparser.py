@@ -29,14 +29,14 @@ class TAPPSParser(object):
     tokens = TAPPSLexer.tokens
     lexer = TAPPSLexer().build()
     
-    precedence = (
-        ('left', 'OR'),
-        ('left', 'AND'),
-        ('left', 'NOT'),
-        ('left', 'EQ', 'NE', 'LT', 'GT', 'LE', 'GE'),
-        ('left', 'PLUS', 'MINUS'),
-        ('left', 'TIMES', 'DIVIDE'),
-        )
+    # precedence = (
+        # ('left', 'OR'),
+        # ('left', 'AND'),
+        # ('left', 'NOT'),
+        # ('left', 'EQ', 'NE', 'LT', 'GT', 'LE', 'GE'),
+        # ('left', 'PLUS', 'MINUS'),
+        # ('left', 'TIMES', 'DIVIDE'),
+        # )
             
     def p_statement(self, p):
         '''
@@ -70,10 +70,17 @@ class TAPPSParser(object):
                        | SHOW ENVIRONMENT
                        | SHOW HISTORY SEMICOLON
                        | SHOW HISTORY
+                       | SHOW PLUGIN LIST SEMICOLON
+                       | SHOW PLUGIN LIST 
+                       | SHOW PLUGIN ID
+                       | SHOW PLUGIN ID SEMICOLON
         '''
         if p[2].lower() == 'asthistory': p[0] = ('show', 'asthistory')
         if p[2].lower() == 'environment': p[0] = ('show', 'environment')
         if p[2].lower() == 'history': p[0] = ('show', 'history')
+        if p[2].lower() == 'plugin': 
+            if p[3].lower() == 'list': p[0] = ('show', 'pluginlist')
+            else: p[0] = ('show', 'plugindata', p[3])
         
         
     def p_error(self, p):
