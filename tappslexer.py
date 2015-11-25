@@ -25,6 +25,7 @@ class TAPPSLexer(object):
 
     reserved = {'as': 'AS',
                 'csv': 'CSV',
+                'displayast': 'DISPLAYAST',
                 'load': 'LOAD',
                 'set': 'SET',
        'insert' : 'INSERT', 
@@ -43,8 +44,10 @@ class TAPPSLexer(object):
     tokens = ['NUMBER',
               'ID', 
               'STRING',
-              'COMMA',      'SEMI',
-              'PLUS',       'MINUS',
+              'COMMA', 
+              'SEMICOLON',
+              'PLUS', 
+              'MINUS',
               'TIMES',      'DIVIDE',
               'LPAREN',     'RPAREN',
               'GT',         'GE',
@@ -84,23 +87,21 @@ class TAPPSLexer(object):
     
     t_ignore  = ' \t'
     
-    #literals = ['+', '-', '*', '/', '>', '>=', '<', '<=', '=', '!=']
     # Regular expression rules for simple tokens
-    t_COMMA   = r'\,'
-    t_SEMI    = r';'
-    t_PLUS    = r'\+'
-    t_MINUS   = r'-'
-    t_TIMES   = r'\*'
-    t_DIVIDE  = r'/'
-    t_LPAREN  = r'\('
-    t_RPAREN  = r'\)'
-    t_GT      = r'>'
-    t_GE      = r'>='
-    t_LT      = r'<'
-    t_LE      = r'<='
-    t_EQ      = r'='
-    t_NE      = r'!='
-    #t_NE      = r'<>'
+    t_COMMA = r'\,'
+    t_SEMICOLON = r';'
+    t_PLUS = r'\+'
+    t_MINUS = r'-'
+    t_TIMES = r'\*'
+    t_DIVIDE = r'/'
+    t_LPAREN = r'\('
+    t_RPAREN = r'\)'
+    t_GT = r'>'
+    t_GE = r'>='
+    t_LT = r'<'
+    t_LE = r'<='
+    t_EQ = r'='
+    t_NE = r'!='
     
     def t_error(self, t):
         raise TypeError("Unknown text '%s'" % (t.value,))

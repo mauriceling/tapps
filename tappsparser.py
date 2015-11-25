@@ -40,15 +40,24 @@ class TAPPSParser(object):
             
     def p_statement(self, p):
         '''
-        statement : load_statement
+        statement : set_statement
+                  | load_statement
                   | insert_statement
                   | select_statement
         '''
         p[0] = [p[1]]
     
+    def p_set_statement(self, p):
+        '''
+        set_statement : SET DISPLAYAST AS ID SEMICOLON
+                      | SET DISPLAYAST AS ID
+        '''
+        if p[2].lower() == 'displayast':
+            p[0] = ('set', 'displayast', p[4])
+            
     def p_load_statement(self, p):
         '''
-        load_statement : LOAD CSV ID AS ID SEMI
+        load_statement : LOAD CSV ID AS ID SEMICOLON
                        | LOAD CSV ID AS ID
         '''
         if p[2].lower() == 'csv':

@@ -38,7 +38,7 @@ class Shell(object):
         self.history = {}
         self.bytecode = {}
         self.environment = {'cwd': os.getcwd(),
-                            'display_ast': True,
+                            'display_ast': False,
                            }
     
     def formatExceptionInfo(self, maxTBlevel=10):
@@ -116,11 +116,15 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if statement == 'show environment': return self.show_environment()
         if statement == 'show history': return self.show_history()
         
-    def do_xxx(self, operand):
-        pass
+    def do_set(self, operand):
+        if operand[0] == 'displayast':
+            if operand[1].lower() in ['t', 'true']:
+                self.environment['display_ast'] = True
+            if operand[1].lower() in ['f', 'false']:
+                self.environment['display_ast'] = False
     
     def command_processor(self, operator, operand):
-        if operator == 'xxx': self.do_xxx(operand)
+        if operator == 'set': self.do_set(operand)
         
     def cmdloop(self):
         self.header()
@@ -139,7 +143,9 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                      state = self.intercept_processor(statement)
                      if state == 'exit': return 0
                 else:
-                    bytecode = self.parser.parse(statement, True)
+                    bytecode = self.parser.parse(statement, 
+                                                 self.environment['display_ast'])
+                    bytecode = bytecode[0]
                     self.bytecode[str(count)] = bytecode
                     operator = bytecode[0]
                     if len(bytecode) == 1: 
