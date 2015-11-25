@@ -37,6 +37,9 @@ class Shell(object):
         self.parser.build()
         self.history = {}
         self.bytecode = {}
+        self.environment = {'cwd': os.getcwd(),
+                            'display_ast': True,
+                           }
     
     def formatExceptionInfo(self, maxTBlevel=10):
         '''
@@ -86,13 +89,22 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
 
     def show_environment(self):
-        pass
+        environment = self.environment.keys()
+        environment.sort()
+        print('')
+        print('Environment Variables:')
+        for e in environment:
+            print('  %s = %s' %(str(e), self.environment[str(e)]))
+        print('')
+        return None
         
     def show_history(self):
         line_number = self.history.keys()
         line_number.sort()
+        print('')
         for i in line_number:
             print('Command #%s : %s' % (str(i), self.history[str(i)]))
+        print('')
         return None
         
     def intercept_processor(self, statement):
