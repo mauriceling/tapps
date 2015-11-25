@@ -113,6 +113,15 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             print('  %s = %s' %(str(e), self.environment[str(e)]))
         print('')
         return None
+    
+    def show_asthistory(self):
+        line_number = self.bytecode.keys()
+        line_number.sort()
+        print('')
+        for i in line_number:
+            print('Command #%s : %s' % (str(i), self.bytecode[str(i)]))
+        print('')
+        return None
         
     def show_history(self):
         line_number = self.history.keys()
@@ -125,6 +134,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         
     def do_show(self, operand):
         op = operand[0].lower()
+        if op == 'asthistory': return self.show_asthistory()
         if op == 'history': return self.show_history()
         if op == 'environment': return self.show_environment()
             

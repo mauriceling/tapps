@@ -24,8 +24,11 @@ from ply import lex
 class TAPPSLexer(object):
 
     reserved = {'as': 'AS',
+                'asthistory': 'ASTHISTORY',
                 'csv': 'CSV',
                 'displayast': 'DISPLAYAST',
+                'environment': 'ENVIRONMENT',
+                'history': 'HISTORY',
                 'load': 'LOAD',
                 'set': 'SET',
                 'show': 'SHOW',
