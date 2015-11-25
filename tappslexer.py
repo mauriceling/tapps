@@ -43,6 +43,8 @@ class TAPPSLexer(object):
     } 
               
     tokens = ['NUMBER',
+              'FOLDER',
+              'FILENAME',
               'ID', 
               'STRING',
               'COMMA', 
@@ -62,7 +64,15 @@ class TAPPSLexer(object):
         r'\d+'
         t.value = int(t.value)    
         return t
-    
+        
+    def t_FOLDER(self, t):
+        r'([A-Za-z]:(/[A-Za-z0-9]+)*)|((/[A-Za-z0-9]+)+)'
+        return t
+        
+    def t_FILENAME(self, t):
+        r'[A-Za-z0-9_\-]+(\.[A-Za-z0-9_\-]+)+'
+        return t
+        
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = TAPPSLexer.reserved.get(t.value,'ID')    # Check for reserved words
