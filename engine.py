@@ -167,6 +167,7 @@ def LoadPlugin(session, plugin):
     if pass_rate < 1.0:
         session['plugins']['loadFail'][plugin] = checks
     else:
+        plugin_name = plugin_name.lower()
         parameters['results'] = Dataframe()
         session['plugins']['loaded'].append(plugin_name)
         session['plugins'][category].append(plugin_name)

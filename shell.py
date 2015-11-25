@@ -151,7 +151,25 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         
     def show_plugindata(self, operand):
         if len(operand) == 2:
-            plugin_name = operand[1]
+            pname = operand[1]
+            parameters = self.session['plugin_' + pname]['parameters']
+            instructions = self.session['plugin_' + pname]['instructions']
+            release = self.session['plugin_' + pname]['release']
+            sdesc= self.session['plugin_' + pname]['sdesc']
+            ldesc= self.session['plugin_' + pname]['ldesc']
+            url = self.session['plugin_' + pname]['URL']
+            contact = self.session['plugin_' + pname]['contact']
+            license = self.session['plugin_' + pname]['license']
+            print('')
+            print('Plugin Name: %s; Release = %s' % (str(pname), str(release)))
+            print('  Short Description: %s' % str(sdesc))
+            print('  Long Description: %s' % str(ldesc))
+            print('  URL: %s' % str(url))
+            print('  Contact: %s' % str(contact))
+            print('  License: %s' % str(license))
+            print('  Instructions: %s' % str(instructions))
+            print('  Parameter Dictionary:')
+            pprint(parameters)
         else:
             return None
         
