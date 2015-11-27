@@ -35,6 +35,7 @@ class TAPPSLexer(object):
                 'load': 'LOAD',
                 'noheader': 'NOHEADER',
                 'plugin': 'PLUGIN',
+                'pythonshell': 'PYTHONSHELL',
                 'separator': 'SEPARATOR',
                 'session': 'SESSION',
                 'set': 'SET',
@@ -105,7 +106,7 @@ class TAPPSLexer(object):
         # Note: this regex is from pyparsing, 
         # see http://stackoverflow.com/questions/2143235/how-to-write-a-regular-expression-to-match-a-string-literal-where-the-escape-is
         # TODO: may be better to refer to http://docs.python.org/reference/lexical_analysis.html 
-        '(?:"(?:[^"\\n\\r\\\\]|(?:"")|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*")|(?:\'(?:[^\'\\n\\r\\\\]|(?:\'\')|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*\')'
+        r'(?:"(?:[^"\\n\\r\\\\]|(?:"")|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*")|(?:\'(?:[^\'\\n\\r\\\\]|(?:\'\')|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*\')'
         t.value = eval(t.value) 
         #t.value[1:-1]
         return t

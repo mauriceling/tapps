@@ -111,9 +111,12 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if op == 'separator':
             self.environment['separator'] = operand[1]
         if op == 'fill-in':
-            if operand[1] == 'None': operand[1] == None
-            try: operand[1] == float(operand[1])
-            else: operand[1] == str(operand[1])
+            if operand[1] == 'None': 
+                operand[1] = None
+            try: 
+                operand[1] = float(operand[1])
+            except: 
+                operand[1] = str(operand[1])
             self.environment['fill-in'] = operand[1]
         return None
     
@@ -200,8 +203,36 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if op == 'pluginlist': return self.show_pluginlist()
         if op == 'plugindata': return self.show_plugindata(operand)
         if op == 'session': return self.show_session()
-            
+        return None
+    
+    def do_loadcsv(self, operand, version):
+        filename = operand[0]
+        filepath = os.sep.join([self.environment['cwd'], filename])
+        df_name = operand[1]
+        if version == 1:
+            self.session = e.LoadCSV(self.session, filepath, True, 
+                                     self.environment['separator'], 
+                                     self.environment['fill-in'], '\n')
+            self.session = e.AttachNewDataFrame(self.session, df_name)
+        if version == 2:
+            self.session = e.LoadCSV(self.session, filepath, False, 
+                                     self.environment['separator'], 
+                                     self.environment['fill-in'], '\n')
+            self.session = e.AttachNewDataFrame(self.session, df_name)
+        return None
+    
+    def do_pythonshell(self, operand):
+        exec('''import code; \
+                from tapps import *; \
+                import engine as tapps_engine; \
+                session = self.session; \
+                environment = self.environment; \
+                code.interact(local=vars())''')
+        
     def command_processor(self, operator, operand):
+        if operator == 'loadcsv1': self.do_loadcsv(operand, 1)
+        if operator == 'loadcsv2': self.do_loadcsv(operand, 2)
+        if operator == 'pythonshell': self.do_pythonshell(operand)
         if operator == 'set': self.do_set(operand)
         if operator == 'show': self.do_show(operand)
         

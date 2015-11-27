@@ -43,6 +43,7 @@ class TAPPSParser(object):
         statement : set_statement
                   | load_statement
                   | show_statement
+                  | shell_statement
         '''
         p[0] = p[1]
     
@@ -115,7 +116,12 @@ class TAPPSParser(object):
             else: p[0] = ('show', 'plugindata', p[3])
         if p[2].lower() == 'session': p[0] = ('show', 'session')
         
-        
+    def p_shell_statement(self, p):
+        '''
+        shell_statement : PYTHONSHELL
+        '''
+        if p[1].lower() == 'pythonshell': p[0] = ('pythonshell',)
+       
     def p_error(self, p):
         print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
     
