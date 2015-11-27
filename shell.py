@@ -63,7 +63,7 @@ class Shell(object):
         
     def header(self):
         print('''
-Technical (Analysis) and Applied Statistics, Version 0.1
+TAPPS: Technical (Analysis) and Applied Statistics, Version 0.1
 Current time is %s
 
 Type "copyright", "credits" or "license" for more information.
@@ -111,13 +111,16 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if op == 'separator':
             self.environment['separator'] = operand[1]
         if op == 'fill-in':
-            if operand[1] == 'None': 
-                operand[1] = None
-            try: 
-                operand[1] = float(operand[1])
-            except: 
-                operand[1] = str(operand[1])
-            self.environment['fill-in'] = operand[1]
+            if (type(operand[1]) == type('str')) and \
+                (operand[1].lower() == 'none'): 
+                self.environment['fill-in'] = None
+            elif (type(operand[1]) == type('str')) and \
+                (operand[1].lower() != 'none'):
+                self.environment['fill-in'] = str(operand[1])
+            elif type(operand[1]) == type(1):
+                self.environment['fill-in'] = int(operand[1])
+            elif type(operand[1]) == type(1.1):
+                self.environment['fill-in'] = float(operand[1])
         if op == 'parameter' and operand[1] != 'dataframe':
             param_name = operand[1]
             paramD_name = operand[2]
@@ -206,6 +209,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         print('')
         print('Session Attributes:')
         pprint(self.session)
+        print('')
         return None
         
     def do_show(self, operand):
@@ -280,39 +284,53 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if operator == 'runplugin': self.do_runplugin(operand)
         if operator == 'set': self.do_set(operand)
         if operator == 'show': self.do_show(operand)
+    
+    def interpret(self, statement, count):
+        try:
+            self.history[str(count)] = statement
+            if statement.lower() in ['copyright', 'copyright;',
+                                     'credits', 'credits;',
+                                     'exit', 'exit;',
+                                     'license', 'license;',
+                                     'quit', 'quit;',
+                                    ]:
+                 state = self.intercept_processor(statement)
+                 if state == 'exit': return 'exit'
+            else:
+                bytecode = self.parser.parse(statement, 
+                                             self.environment['display_ast'])
+                self.bytecode[str(count)] = bytecode
+                operator = bytecode[0]
+                if len(bytecode) == 1: 
+                    operand = []
+                else: 
+                    operand = bytecode[1:]
+                self.command_processor(operator, operand)
+            count = count + 1
+        except:
+            error_message = list(self.formatExceptionInfo())
+            for line in error_message:
+                if (type(line) == list):
+                    for l in line: 
+                        print(l)
+        return count
         
     def cmdloop(self):
         self.header()
         count = 1
         while True:
-            try:
-                statement = raw_input('TAPPS: %s> ' % str(count)).strip() 
-                self.history[str(count)] = statement
-                if statement.lower() in ['copyright', 'copyright;',
-                                         'credits', 'credits;',
-                                         'exit', 'exit;',
-                                         'license', 'license;',
-                                         'quit', 'quit;',
-                                        ]:
-                     state = self.intercept_processor(statement)
-                     if state == 'exit': return 0
-                else:
-                    bytecode = self.parser.parse(statement, 
-                                                 self.environment['display_ast'])
-                    self.bytecode[str(count)] = bytecode
-                    operator = bytecode[0]
-                    if len(bytecode) == 1: 
-                        operand = []
-                    else: 
-                        operand = bytecode[1:]
-                    self.command_processor(operator, operand)
-                count = count + 1
-            except:
-                error_message = list(self.formatExceptionInfo())
-                for line in error_message:
-                    if (type(line) == list):
-                        for l in line: 
-                            print(l)
+            statement = raw_input('TAPPS: %s> ' % str(count)).strip() 
+            count = self.interpret(statement, count)
+            if count == 'exit': return 0
+        return self.session
+        
+    def cmdscript(self, script):
+        count = 1
+        for statement in script:
+            statement = statement.strip()
+            print('Command #%s: %s' % (str(count), statement))
+            count = self.interpret(statement, count)
+            if count == 'exit': return 0
         return self.session
             
        
