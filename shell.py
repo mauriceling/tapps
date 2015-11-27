@@ -227,11 +227,24 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                 import engine as tapps_engine; \
                 session = self.session; \
                 environment = self.environment; \
+                print(""); \
+                print("You had spawned a Python interpreter (sub-shell) in TAPPS"); \
+                print("Please use Ctrl-D to exit from this sub-shell"); \
+                print(""); \
                 code.interact(local=vars())''')
+        return None
+        
+    def do_newparam(self, operand):
+        plugin_name = operand[0]
+        parameter_name = operand[1]
+        parameters = e.NewPluginParameters(self.session, plugin_name)
+        self.session['parameters'][parameter_name] = parameters
+        return None
         
     def command_processor(self, operator, operand):
         if operator == 'loadcsv1': self.do_loadcsv(operand, 1)
         if operator == 'loadcsv2': self.do_loadcsv(operand, 2)
+        if operator == 'newparam': self.do_newparam(operand)
         if operator == 'pythonshell': self.do_pythonshell(operand)
         if operator == 'set': self.do_set(operand)
         if operator == 'show': self.do_show(operand)

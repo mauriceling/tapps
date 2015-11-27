@@ -44,6 +44,7 @@ class TAPPSParser(object):
                   | load_statement
                   | show_statement
                   | shell_statement
+                  | new_statement
         '''
         p[0] = p[1]
     
@@ -121,6 +122,13 @@ class TAPPSParser(object):
         shell_statement : PYTHONSHELL
         '''
         if p[1].lower() == 'pythonshell': p[0] = ('pythonshell',)
+        
+    def p_new_statement(self, p):
+        '''
+        new_statement : NEW ID PARAMETERS AS ID SEMICOLON
+                      | NEW ID PARAMETERS AS ID
+        '''
+        if p[3].lower() == 'parameters': p[0] = ('newparam', p[2], p[5])
        
     def p_error(self, p):
         print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
