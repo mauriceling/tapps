@@ -118,6 +118,18 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             except: 
                 operand[1] = str(operand[1])
             self.environment['fill-in'] = operand[1]
+        if op == 'parameter' and operand[1] != 'dataframe':
+            param_name = operand[1]
+            paramD_name = operand[2]
+            data = operand[3]
+            if paramD_name in self.session['parameters']:
+                self.session['parameters'][paramD_name][param_name] = data
+        if op == 'parameter' and operand[1] == 'dataframe':
+            param_name = operand[1]
+            paramD_name = operand[2]
+            data = operand[3]
+            if paramD_name in self.session['parameters']:
+                pass #TODO
         return None
     
     def show_environment(self):

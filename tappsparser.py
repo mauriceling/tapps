@@ -58,11 +58,15 @@ class TAPPSParser(object):
                       | SET SEPARATOR separators
                       | SET FILLIN NUMBER SEMICOLON
                       | SET FILLIN NUMBER
+                      | SET PARAMETER ID IN ID AS ID SEMICOLON
+                      | SET PARAMETER ID IN ID AS ID
         '''
         if p[2].lower() == 'displayast': p[0] = ('set', 'displayast', p[3])
         if p[2].lower() == 'cwd': p[0] = ('set', 'cwd', p[3])
         if p[2].lower() == 'separator': p[0] = ('set', 'separator', p[3])
         if p[2].lower() == 'fillin': p[0] = ('set', 'fill-in', p[3])
+        if p[2].lower() == 'parameter': 
+            p[0] = ('set', 'parameter', p[3], p[5], p[7])
     
     def p_separator(self, p):
         '''
