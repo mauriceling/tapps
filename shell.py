@@ -247,6 +247,17 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                 code.interact(local=vars())''')
         return None
         
+    def do_newdataframe(self, operand):
+        new_df_name = operand[0]
+        paramD_name = operand[1]
+        df_in_paramD = operand[2]
+        if paramD_name in self.session['parameters']:
+            if df_in_paramD in self.session['parameters'][paramD_name]:
+                df = copy.deepcopy(self.session['parameters'][paramD_name][df_in_paramD])
+                df.name = new_df_name
+                self.session['MDF'].addDataframe(df, False)
+        return None
+    
     def do_newparam(self, operand):
         plugin_name = operand[0]
         parameter_name = operand[1]

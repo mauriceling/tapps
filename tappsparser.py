@@ -61,6 +61,8 @@ class TAPPSParser(object):
                       | SET FILLIN NUMBER
                       | SET PARAMETER ID IN ID AS ID SEMICOLON
                       | SET PARAMETER ID IN ID AS ID
+                      | SET PARAMETER DATAFRAME IN ID AS ID SEMICOLON
+                      | SET PARAMETER DATAFRAME IN ID AS ID
         '''
         if p[2].lower() == 'displayast': p[0] = ('set', 'displayast', p[3])
         if p[2].lower() == 'cwd': p[0] = ('set', 'cwd', p[3])
