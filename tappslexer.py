@@ -97,7 +97,7 @@ class TAPPSLexer(object):
         t.type = TAPPSLexer.reserved.get(t.value,'ID')    # Check for reserved words
         # redis is case sensitive in hash keys but we want the sql to be case insensitive,
         # so we lowercase identifiers 
-        t.value = t.value.lower()
+        # t.value = t.value.lower()
         return t
     
     def t_STRING(self, t):
