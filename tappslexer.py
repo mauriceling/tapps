@@ -27,8 +27,10 @@ class TAPPSLexer(object):
                 'asthistory': 'ASTHISTORY',
                 'csv': 'CSV',
                 'cwd': 'CWD',
+                'dataframe': 'DATAFRAME',
                 'displayast': 'DISPLAYAST',
                 'fillin': 'FILLIN',
+                'from': 'FROM',
                 'environment': 'ENVIRONMENT',
                 'history': 'HISTORY',
                 'in': 'IN',
@@ -36,10 +38,12 @@ class TAPPSLexer(object):
                 'load': 'LOAD',
                 'new': 'NEW',
                 'noheader': 'NOHEADER',
-                'parameter': 'PARAMETER',
                 'parameters': 'PARAMETERS',
+                'parameter': 'PARAMETER',
                 'plugin': 'PLUGIN',
                 'pythonshell': 'PYTHONSHELL',
+                'results': 'RESULTS',
+                'runplugin': 'RUNPLUGIN',
                 'separator': 'SEPARATOR',
                 'session': 'SESSION',
                 'set': 'SET',
@@ -96,7 +100,7 @@ class TAPPSLexer(object):
     def t_FILENAME(self, t):
         r'[A-Za-z0-9_\-]+(\.[A-Za-z0-9_\-]+)+'
         return t
-        
+
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = TAPPSLexer.reserved.get(t.value,'ID')    # Check for reserved words

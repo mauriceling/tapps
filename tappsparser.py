@@ -45,6 +45,7 @@ class TAPPSParser(object):
                   | show_statement
                   | shell_statement
                   | new_statement
+                  | runplugin_statement
         '''
         p[0] = p[1]
     
@@ -131,9 +132,28 @@ class TAPPSParser(object):
         '''
         new_statement : NEW ID PARAMETERS AS ID SEMICOLON
                       | NEW ID PARAMETERS AS ID
+                      | NEW ID DATAFRAME FROM ID plocation SEMICOLON
+                      | NEW ID DATAFRAME FROM ID plocation
         '''
-        if p[3].lower() == 'parameters': p[0] = ('newparam', p[2], p[5])
-       
+        if p[3].lower() == 'parameters': 
+            p[0] = ('newparam', p[2], p[5])
+        if p[3].lower() == 'dataframe': 
+            p[0] = ('newdataframe', p[2], p[5], p[6])
+    
+    def p_plocation(self, p):
+        '''
+        plocation : RESULTS
+                  | DATAFRAME
+        '''
+        p[0] = p[1]
+        
+    def p_runplugin_statement(self, p):
+        '''
+        runplugin_statement : RUNPLUGIN ID SEMICOLON
+                            | RUNPLUGIN ID
+        '''
+        p[0] = ('runplugin', p[2])
+        
     def p_error(self, p):
         print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
     

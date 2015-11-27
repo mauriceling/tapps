@@ -254,11 +254,19 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         self.session['parameters'][parameter_name] = parameters
         return None
         
+    def do_runplugin(self, operand):
+        paramD_name = operand[0]
+        if paramD_name in self.session['parameters']:
+            e.RunPlugin(self.session, paramD_name)
+        return None
+        
     def command_processor(self, operator, operand):
         if operator == 'loadcsv1': self.do_loadcsv(operand, 1)
         if operator == 'loadcsv2': self.do_loadcsv(operand, 2)
+        if operator == 'newdataframe': self.do_newdataframe(operand)
         if operator == 'newparam': self.do_newparam(operand)
         if operator == 'pythonshell': self.do_pythonshell(operand)
+        if operator == 'runplugin': self.do_runplugin(operand)
         if operator == 'set': self.do_set(operand)
         if operator == 'show': self.do_show(operand)
         
