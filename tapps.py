@@ -208,9 +208,43 @@ def RunShell(session):
     shell = s.Shell(session)
     shell.cmdloop()
     
+def RunScript(session, scriptfile):
+    shell = s.Shell(session)
+    script = open(scriptfile, 'r').readlines()
+    script = [x[:-1] for x in script]
+    script = [x.strip() for x in script]
+    script = [x for x in script 
+                  if (x != '') or x.startswith('#')]
+    shell.cmdscript(script)
+    
+def RunNonShell(session, argv):
+    if argv[1].lower() == 'script':
+        RunScript(session, argv[2])
+    
 session = startup(session)
 
 
 if __name__ == '__main__':
-    RunShell(session)
-    sys.exit()
+    if len(sys.argv) == 1:
+        RunShell(session)
+        sys.exit()
+    if len(sys.argv) == 3:
+        RunNonShell(session, sys.argv)
+        sys.exit()
+    if (len(sys.argv) == 3) or \
+        (sys.argv[1] == 'help') or \
+        (sys.argv[1] == 'usage'):
+        print('')
+        print('TAPPS: Technical (Analysis) and Applied Statistics')
+        print('')
+        print('Copyright (C) 2015, Maurice HT Ling (on behalf of TAPPS Team)')
+        print('https://github.com/mauriceling/tapps')
+        print('')
+        print('Usage: python tapps.py [option] [parameter]')
+        print('')
+        print('If no option is given (i.e. python tapps.py), TAPPS command')
+        print('line shell will be launched for interactive usage.')
+        print('')
+        print("If option = 'script' (i.e. python tapps.py script <script file>),") 
+        print('a script file name must be given. The script file written in')
+        print('TAPPS scripting language will be executed.')
