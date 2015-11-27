@@ -57,8 +57,8 @@ class TAPPSParser(object):
                       | SET CWD FOLDER
                       | SET SEPARATOR separators SEMICOLON
                       | SET SEPARATOR separators
-                      | SET FILLIN NUMBER SEMICOLON
-                      | SET FILLIN NUMBER
+                      | SET FILLIN fillin_options SEMICOLON
+                      | SET FILLIN fillin_options
                       | SET PARAMETER ID IN ID AS ID SEMICOLON
                       | SET PARAMETER ID IN ID AS ID
                       | SET PARAMETER DATAFRAME IN ID AS ID SEMICOLON
@@ -71,6 +71,13 @@ class TAPPSParser(object):
         if p[2].lower() == 'parameter': 
             p[0] = ('set', 'parameter', p[3], p[5], p[7])
     
+    def p_fillin_options(self, p):
+        '''
+        fillin_options : NUMBER
+                       | ID
+        '''
+        p[0] = p[1]
+        
     def p_separator(self, p):
         '''
         separators : DELIMITER
