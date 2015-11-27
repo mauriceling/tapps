@@ -28,11 +28,14 @@ class TAPPSLexer(object):
                 'csv': 'CSV',
                 'cwd': 'CWD',
                 'displayast': 'DISPLAYAST',
+                'fillin': 'FILLIN',
                 'environment': 'ENVIRONMENT',
                 'history': 'HISTORY',
                 'list': 'LIST',
                 'load': 'LOAD',
+                'noheader': 'NOHEADER',
                 'plugin': 'PLUGIN',
+                'separator': 'SEPARATOR',
                 'session': 'SESSION',
                 'set': 'SET',
                 'show': 'SHOW',
@@ -55,26 +58,30 @@ class TAPPSLexer(object):
               'ID', 
               'STRING',
               'COMMA', 
+              'COLON',
               'SEMICOLON',
-              # 'PLUS', 
-              # 'MINUS',
-              # 'TIMES',      
-              # 'DIVIDE',
-              # 'LPAREN',     
-              # 'RPAREN',
-              # 'GT', 
-              # 'GE',
-              # 'LT',
-              # 'LE',
-              # 'EQ',
-              # 'NE', 
+              'RIGHTSLASH',
+              'BAR',
+              'DOT',
+              'PLUS', 
+              'MINUS',
+              'TIMES',      
+              'DIVIDE',
+              'LPAREN',     
+              'RPAREN',
+              'GT', 
+              'GE',
+              'LT',
+              'LE',
+              'EQ',
+              'NE', 
+              'DELIMITER',
               ] + list(reserved.values())
     
     def t_NUMBER(self, t):
         # TODO: see http://docs.python.org/reference/lexical_analysis.html
         # for what Python accepts, then use eval
-        r'\d+'
-        t.value = int(t.value)    
+        r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'   
         return t
         
     def t_FOLDER(self, t):
@@ -112,19 +119,24 @@ class TAPPSLexer(object):
     
     # Regular expression rules for simple tokens
     t_COMMA = r'\,'
+    t_COLON = r':'
     t_SEMICOLON = r';'
-    # t_PLUS = r'\+'
-    # t_MINUS = r'-'
-    # t_TIMES = r'\*'
-    # t_DIVIDE = r'/'
-    # t_LPAREN = r'\('
-    # t_RPAREN = r'\)'
-    # t_GT = r'>'
-    # t_GE = r'>='
-    # t_LT = r'<'
-    # t_LE = r'<='
-    # t_EQ = r'='
-    # t_NE = r'!='
+    t_RIGHTSLASH = r'\\'
+    t_BAR = r'\|'
+    t_DOT = r'\.'
+    t_PLUS = r'\+'
+    t_MINUS = r'-'
+    t_TIMES = r'\*'
+    t_DIVIDE = r'/'
+    t_LPAREN = r'\('
+    t_RPAREN = r'\)'
+    t_GT = r'>'
+    t_GE = r'>='
+    t_LT = r'<'
+    t_LE = r'<='
+    t_EQ = r'='
+    t_NE = r'!='
+    t_DELIMITER = r'(/|>|<|\@|=|\+|-|\*|\,|;|:|\.|\\|\|)+'
     
     def t_error(self, t):
         raise TypeError("Unknown text '%s'" % (t.value,))

@@ -1,5 +1,5 @@
 '''
-TAPPS commandline shell.
+TAPPS commandline shell and virtual machine.
 
 Date created: 25th November 2015
 
@@ -40,6 +40,8 @@ class Shell(object):
         self.bytecode = {}
         self.environment = {'cwd': os.getcwd(),
                             'display_ast': False,
+                            'fill-in': None,
+                            'separator': ',',
                            }
     
     def formatExceptionInfo(self, maxTBlevel=10):
@@ -106,6 +108,13 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if op == 'cwd':
             self.environment['cwd'] = operand[1]
             self.session['cwd'] = operand[1]
+        if op == 'separator':
+            self.environment['separator'] = operand[1]
+        if op == 'fill-in':
+            if operand[1] == 'None': operand[1] == None
+            try: operand[1] == float(operand[1])
+            else: operand[1] == str(operand[1])
+            self.environment['fill-in'] = operand[1]
         return None
     
     def show_environment(self):

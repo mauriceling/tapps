@@ -52,17 +52,45 @@ class TAPPSParser(object):
                       | SET DISPLAYAST ID
                       | SET CWD FOLDER SEMICOLON
                       | SET CWD FOLDER
+                      | SET SEPARATOR separators SEMICOLON
+                      | SET SEPARATOR separators
+                      | SET FILLIN NUMBER SEMICOLON
+                      | SET FILLIN NUMBER
         '''
         if p[2].lower() == 'displayast': p[0] = ('set', 'displayast', p[3])
         if p[2].lower() == 'cwd': p[0] = ('set', 'cwd', p[3])
-            
+        if p[2].lower() == 'separator': p[0] = ('set', 'separator', p[3])
+        if p[2].lower() == 'fillin': p[0] = ('set', 'fill-in', p[3])
+    
+    def p_separator(self, p):
+        '''
+        separators : DELIMITER
+                   | COMMA
+                   | COLON
+                   | SEMICOLON
+                   | RIGHTSLASH
+                   | BAR
+                   | DOT
+                   | PLUS
+                   | MINUS
+                   | TIMES
+                   | DIVIDE
+                   | GT
+                   | LT
+        '''
+        p[0] = p[1]
+        
     def p_load_statement(self, p):
         '''
         load_statement : LOAD CSV FILENAME AS ID SEMICOLON
                        | LOAD CSV FILENAME AS ID
+                       | LOAD NOHEADER CSV FILENAME AS ID SEMICOLON
+                       | LOAD NOHEADER CSV FILENAME AS ID
         '''
-        if p[2].lower() == 'csv':
-            p[0] = ('loadcsv', p[3], p[5])
+        if p[2].lower() == 'csv': 
+            p[0] = ('loadcsv1', p[3], p[5])
+        if p[2].lower() == 'noheader' and p[3].lower() == 'csv': 
+            p[0] = ('loadcsv2', p[4], p[65])
             
     def p_show_statement(self, p):
         '''
