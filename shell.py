@@ -125,11 +125,12 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             if paramD_name in self.session['parameters']:
                 self.session['parameters'][paramD_name][param_name] = data
         if op == 'parameter' and operand[1] == 'dataframe':
-            param_name = operand[1]
             paramD_name = operand[2]
-            data = operand[3]
+            df_name = operand[3]
             if paramD_name in self.session['parameters']:
-                pass #TODO
+                if df_name in self.session['MDF'].frames:
+                    data = self.session['MDF'].frames[df_name]
+                    self.session['parameters'][paramD_name]['dataframe'] = data
         return None
     
     def show_environment(self):
