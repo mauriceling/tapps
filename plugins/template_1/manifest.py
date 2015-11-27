@@ -16,11 +16,13 @@ release = 1
 
 # Category which this plugin / app should belong to (mandatory)
 # Allowed categories are:
-# 1. statistics
-# 2. statistics.hypothesis
-# 3. statistics.model
-# 4. statistics.timeseries
-# - unclassified
+# 1. exporter
+# 2. importer
+# 3. statistics
+# 4. statistics.hypothesis
+# 5. statistics.model
+# 6. statistics.timeseries
+# 7. unclassified
 category = 'unclassified'
 
 # A short description of the plugin / app (not mandatory)
