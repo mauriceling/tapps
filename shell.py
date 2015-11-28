@@ -1,5 +1,5 @@
 '''
-TAPPS commandline shell and virtual machine.
+TAPPS interpreter: command-line shell and virtual machine.
 
 Date created: 25th November 2015
 
