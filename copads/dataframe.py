@@ -194,7 +194,7 @@ class Dataframe(object):
         self.data = {}
         self.label = []
         self.analyses = {}
-    
+        
     def cast(self, type, error_replace, series_name='all'):
         '''
         Method to cast data in the one or all series into a specific data 
@@ -289,7 +289,7 @@ class Dataframe(object):
         Method to extract one or more data labels across all series from 
         the current data frame into a new data frame.
         
-        @param label_names: names of series to extract
+        @param label_names: names of labels to extract
         @type label_names: list
         @param new_dataframe_name: name for new data frame (that is to be 
         returned)
@@ -303,6 +303,56 @@ class Dataframe(object):
             except KeyError: pass
         df.data = data
         df.label = label_names
+        df.series_names = [x for x in self.series_names]
+        return df
+        
+    def extractValue(self, operator, value, new_dataframe_name=''):
+        '''
+        Method to extract one or more data labels across all series, based on 
+        criterion, from the current data frame into a new data frame.
+        
+        For example, the following will extract all data labels across all 
+        series where data value is more than 30, and generate and return a new 
+        dataframe (ndf).
+        
+        >>> ndf = df.replaceLabel('>', 30, 'newframe')
+        
+        @param label_names: names of labels to extract
+        @type label_names: list
+        @param operator: comparative operator. Allowed values are: '>' (more 
+        than), '<' (less than), '>=' (more than or equals to), '<=' (less 
+        than or equals to), '=' (equals to), and '!=' (not equals to).
+        @param original_value: original value of the data.
+        @param new_dataframe_name: name for new data frame (that is to be 
+        returned)
+        @type new_dataframe_name: string
+        @return: dataframe.Dataframe object
+        '''
+        df = Dataframe(str(new_dataframe_name))
+        data = {}
+        for label in self.data.keys():
+            try:
+                if (operator == '>') and \
+                    sum([1 for item in self.data[label] if item > value]):
+                        data[label] = [x for x in self.data[label]]
+                elif (operator == '<') and \
+                    sum([1 for item in self.data[label] if item < value]):
+                        data[label] = [x for x in self.data[label]]
+                elif (operator == '>=') and \
+                    sum([1 for item in self.data[label] if item >= value]):
+                        data[label] = [x for x in self.data[label]]
+                elif (operator == '<=') and \
+                    sum([1 for item in self.data[label] if item <= value]):
+                        data[label] = [x for x in self.data[label]]
+                elif (operator == '=') and \
+                    sum([1 for item in self.data[label] if item == value]):
+                        data[label] = [x for x in self.data[label]]
+                elif (operator == '!=') and \
+                    sum([1 for item in self.data[label] if item != value]):
+                        data[label] = [x for x in self.data[label]]
+            except KeyError: pass
+        df.data = data
+        df.label = data.keys()
         df.series_names = [x for x in self.series_names]
         return df
     
@@ -630,6 +680,85 @@ class Dataframe(object):
                                if self.data[label][series] == datum]
         if len(coordinates) == 0:  return [(None, None)]
         else: return list(set(coordinates))
+        
+    def replaceLabel(self, label_name, operator, original_value, new_value):
+        '''
+        Method to replace values, within a label, from its original value 
+        to a new value, if and only if the original value meets a certain 
+        criterion.
+        
+        For example, the following will replace all values of more than 30, 
+        that are found within Label 'B', to 40.
+        
+        >>> df.replaceLabel('B', '>', 30, 40)
+        
+        @param label_name: the label name for the data value to be replaced.
+        @param operator: comparative operator. Allowed values are: '>' (more 
+        than), '<' (less than), '>=' (more than or equals to), '<=' (less 
+        than or equals to), '=' (equals to), and '!=' (not equals to).
+        @param original_value: original value of the data.
+        @param new_value: new value to be replaced when the criterion is met.
+        '''
+        if label_name not in self.data: return None
+        for i in range(len(self.data[label_name])):
+            if (operator == '=') and \
+                (self.data[label_name][i] == original_value):
+                    self.data[label_name][i] = new_value
+            elif (operator == '>') and \
+                (self.data[label_name][i] > original_value):
+                    self.data[label_name][i] = new_value
+            elif (operator == '<') and \
+                (self.data[label_name][i] < original_value):
+                    self.data[label_name][i] = new_value
+            elif (operator == '>=') and \
+                (self.data[label_name][i] >= original_value):
+                    self.data[label_name][i] = new_value
+            elif (operator == '<=') and \
+                (self.data[label_name][i] <= original_value):
+                    self.data[label_name][i] = new_value
+            elif (operator == '!=') and \
+                (self.data[label_name][i] != original_value):
+                    self.data[label_name][i] = new_value
+                    
+    def replaceSeries(self, series_name, operator, original_value, new_value):
+        '''
+        Method to replace values, within a series, from its original value 
+        to a new value, if and only if the original value meets a certain 
+        criterion.
+        
+        For example, the following will replace all values of more than 30, 
+        that are found within Series 'B', to 40.
+        
+        >>> df.replaceSeries('B', '>', 30, 40)
+        
+        @param series_name: the series name for the data value to be replaced.
+        @param operator: comparative operator. Allowed values are: '>' (more 
+        than), '<' (less than), '>=' (more than or equals to), '<=' (less 
+        than or equals to), '=' (equals to), and '!=' (not equals to).
+        @param original_value: original value of the data.
+        @param new_value: new value to be replaced when the criterion is met.
+        '''
+        if series_name not in self.series_names: return None
+        else: index = self.series_names.index(series_name)
+        for label in self.data.keys():
+            if (operator == '=') and \
+                (self.data[label][index] == original_value):
+                    self.data[label][index] = new_value
+            elif (operator == '>') and \
+                (self.data[label][index] > original_value):
+                    self.data[label][index] = new_value
+            elif (operator == '<') and \
+                (self.data[label][index] < original_value):
+                    self.data[label][index] = new_value
+            elif (operator == '>=') and \
+                (self.data[label][index] >= original_value):
+                    self.data[label][index] = new_value
+            elif (operator == '<=') and \
+                (self.data[label][index] <= original_value):
+                    self.data[label][index] = new_value
+            elif (operator == '!=') and \
+                (self.data[label][index] != original_value):
+                    self.data[label][index] = new_value
         
         
 class MultiDataframe(object):
