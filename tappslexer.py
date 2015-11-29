@@ -23,8 +23,10 @@ from ply import lex
 
 class TAPPSLexer(object):
 
-    reserved = {'as': 'AS',
+    reserved = {'all': 'ALL',
+                'as': 'AS',
                 'asthistory': 'ASTHISTORY',
+                'cast': 'CAST',
                 'csv': 'CSV',
                 'cwd': 'CWD',
                 'dataframe': 'DATAFRAME',
@@ -44,10 +46,12 @@ class TAPPSLexer(object):
                 'pythonshell': 'PYTHONSHELL',
                 'results': 'RESULTS',
                 'runplugin': 'RUNPLUGIN',
+                'select': 'SELECT',
                 'separator': 'SEPARATOR',
                 'session': 'SESSION',
                 'set': 'SET',
                 'show': 'SHOW',
+                'where': 'WHERE',
        # 'insert' : 'INSERT', 
        # 'into'   : 'INTO',
        # 'select' : 'SELECT',

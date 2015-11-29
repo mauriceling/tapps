@@ -27,12 +27,16 @@ import traceback
 from datetime import datetime
 from pprint import pprint
     
+import copads
+from copads.dataframe import Series
+from copads.dataframe import Dataframe
+
 import engine as e
 from tappsparser import TAPPSParser
 
 class Shell(object):
     
-    def __init__(self, session=''):
+    def __init__(self, session={}):
         self.session = session
         self.parser = TAPPSParser()
         self.parser.build()
@@ -261,7 +265,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                 df.name = new_df_name
                 self.session['MDF'].addDataframe(df, False)
         return None
-    
+        
     def do_newparam(self, operand):
         plugin_name = operand[0]
         parameter_name = operand[1]
@@ -274,8 +278,41 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if paramD_name in self.session['parameters']:
             e.RunPlugin(self.session, paramD_name)
         return None
+    
+    def do_greedysearch(operand):
+        df_name = operand[0]
+        ndf_name = operand[1]
+        binop = operand[2]
+        value = operand[3]
+        if binop not in ['=', '!=', '>', '>=', '<', '<=']: binop = '*'
+        if df_name in self.session['MDF'].frames:
+            df = self.session['MDF'].frames[df_name]
+            ndf = df.extractValue(binop, value, ndf_name)
+            self.session['MDF'].addDataframe(ndf, False)
+        else:
+            ndf = Dataframe(ndf_name)
+            self.session['MDF'].addDataframe(ndf, False)
+        return None
+        
+    def do_idsearch(self, operand):
+        df_name = operand[0]
+        ndf_name = operand[1]
+        series_name = operand[2]
+        binop = operand[3]
+        value = operand[4]
+        if binop not in ['=', '!=', '>', '>=', '<', '<=']: binop = '*'
+        if df_name in self.session['MDF'].frames:
+            df = self.session['MDF'].frames[df_name]
+            ndf = df.extractSeriesValue(series_name, binop, value, ndf_name)
+            self.session['MDF'].addDataframe(ndf, False)
+        else:
+            ndf = Dataframe(ndf_name)
+            self.session['MDF'].addDataframe(ndf, False)
+        return None
         
     def command_processor(self, operator, operand):
+        if operator == 'greedysearch': self.do_greedysearch(operand)
+        if operator == 'idsearch': self.do_idsearch(operand)
         if operator == 'loadcsv1': self.do_loadcsv(operand, 1)
         if operator == 'loadcsv2': self.do_loadcsv(operand, 2)
         if operator == 'newdataframe': self.do_newdataframe(operand)
@@ -335,7 +372,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             
        
     
-if __name__ == '__main__':    
-    shell = Shell()
+if __name__ == '__main__':
+    from tapps import session
+    shell = Shell(session)
     shell.cmdloop()
-    

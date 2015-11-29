@@ -155,14 +155,62 @@ class TAPPSParser(object):
                   | DATAFRAME
         '''
         p[0] = p[1]
+    
+    def p_select_statement(self, p):
+        '''
+        select_statement : SELECT FROM ID AS ID WHERE binop value
+                         | SELECT FROM ID AS ID WHERE ID binop value
+        '''
+        if len(p) == 9:
+            p[0] = ('greedysearch', p[3], p[5], p[7], p[8])
+        if len(p) == 10:
+            p[0] = ('idsearch', p[3], p[5], p[7], p[8], p[9])
+    
+    def p_binop(self, p):
+        '''
+        binop : DELIMITER
+              | GE
+              | LE
+              | EQ
+              | NE
+        '''
+        p[0] = p[1]
         
+    def p_id_list(self, p):
+        '''
+        id_list : ID
+                | id_list DELIMITER ID
+        '''
+        if len(p) == 2:
+            p[0] = [p[1]]
+        if len(p) > 2:
+            p[0] = p[1] + [p[3]]
+        
+    def p_value(self, p):
+        '''
+        value : number_value
+              | id_value
+        '''
+        p[0] = p[1]
+        
+    def p_number_value(self, p):
+        '''
+        number_value : NUMBER
+        '''
+        p[0] = float(p[1])
+        
+    def p_id_value(self, p):
+        '''
+        id_value : ID
+        '''
+        p[0] = str(p[1])
+            
     def p_runplugin_statement(self, p):
         '''
-        runplugin_statement : RUNPLUGIN ID SEMICOLON
-                            | RUNPLUGIN ID
+        runplugin_statement : RUNPLUGIN ID
         '''
         p[0] = ('runplugin', p[2])
-        
+            
     def p_error(self, p):
         print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
     
@@ -202,48 +250,6 @@ def p_insert_statement(self, p):
             p[0] = ('insert', p[3], p[5], p[9])
         else:
             p[0] = ('insert', p[2], p[4], p[8])
-
-    def p_select_statement(self, p):
-        '''
-        select_statement : SELECT select_columns FROM ID opt_where_clause opt_orderby_clause
-        '''
-        p[0] = ('select', p[2], p[4], p[5], p[6])
-        
-    def p_select_columns(self, p):
-        '''
-        select_columns : TIMES
-                       | id_list
-        '''
-        p[0] = p[1]
-        
-    def p_opt_where_clause(self, p):
-        '''
-        opt_where_clause : WHERE search_condition
-                         |
-        '''
-        if len(p) == 1:
-            p[0] = None
-        else:
-            p[0] = p[2]
-            
-    def p_search_condition(self, p):
-        '''
-        search_condition : search_condition OR search_condition
-                         | search_condition AND search_condition
-                         | NOT search_condition
-                         | LPAREN search_condition RPAREN
-                         | predicate
-        '''
-        lenp = len(p)
-        if lenp == 4:
-            if p[1] == '(':
-                p[0] = p[2]
-            else:
-                p[0] = (p[2], p[1], p[3])
-        elif lenp == 3:
-            p[0] = (p[1], p[2])
-        else:
-            p[0] = p[1]
             
     # TODO: there are other predicates...see sql2.y            
     def p_predicate(self, p):
@@ -323,16 +329,6 @@ def p_insert_statement(self, p):
     #                    | expr EQ expr
     #    '''
     #    p[0] = (p[2], p[1], p[3])
-        
-    def p_id_list(self, p):
-        '''
-        id_list : ID
-                | id_list COMMA ID
-        '''
-        if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[0] = p[1] + [p[3]]
 
     def p_expr_list(self, p):
         '''
