@@ -45,23 +45,18 @@ class TAPPSParser(object):
                   | show_statement
                   | shell_statement
                   | new_statement
+                  | select_statement
                   | runplugin_statement
         '''
         p[0] = p[1]
     
     def p_set_statement(self, p):
         '''
-        set_statement : SET DISPLAYAST ID SEMICOLON
-                      | SET DISPLAYAST ID
-                      | SET CWD FOLDER SEMICOLON
+        set_statement : SET DISPLAYAST ID
                       | SET CWD FOLDER
-                      | SET SEPARATOR separators SEMICOLON
                       | SET SEPARATOR separators
-                      | SET FILLIN fillin_options SEMICOLON
                       | SET FILLIN fillin_options
-                      | SET PARAMETER ID IN ID AS ID SEMICOLON
                       | SET PARAMETER ID IN ID AS ID
-                      | SET PARAMETER DATAFRAME IN ID AS ID SEMICOLON
                       | SET PARAMETER DATAFRAME IN ID AS ID
         '''
         if p[2].lower() == 'displayast': p[0] = ('set', 'displayast', p[3])
@@ -98,9 +93,7 @@ class TAPPSParser(object):
         
     def p_load_statement(self, p):
         '''
-        load_statement : LOAD CSV FILENAME AS ID SEMICOLON
-                       | LOAD CSV FILENAME AS ID
-                       | LOAD NOHEADER CSV FILENAME AS ID SEMICOLON
+        load_statement : LOAD CSV FILENAME AS ID
                        | LOAD NOHEADER CSV FILENAME AS ID
         '''
         if p[2].lower() == 'csv': 
@@ -110,17 +103,11 @@ class TAPPSParser(object):
             
     def p_show_statement(self, p):
         '''
-        show_statement : SHOW ASTHISTORY SEMICOLON
-                       | SHOW ASTHISTORY
-                       | SHOW ENVIRONMENT SEMICOLON
+        show_statement : SHOW ASTHISTORY
                        | SHOW ENVIRONMENT
-                       | SHOW HISTORY SEMICOLON
                        | SHOW HISTORY
-                       | SHOW PLUGIN LIST SEMICOLON
                        | SHOW PLUGIN LIST 
-                       | SHOW PLUGIN ID SEMICOLON
                        | SHOW PLUGIN ID 
-                       | SHOW SESSION SEMICOLON
                        | SHOW SESSION
         '''
         if p[2].lower() == 'asthistory': p[0] = ('show', 'asthistory')
@@ -139,14 +126,12 @@ class TAPPSParser(object):
         
     def p_new_statement(self, p):
         '''
-        new_statement : NEW ID PARAMETERS AS ID SEMICOLON
-                      | NEW ID PARAMETERS AS ID
-                      | NEW ID DATAFRAME FROM ID plocation SEMICOLON
+        new_statement : NEW ID PARAMETERS AS ID
                       | NEW ID DATAFRAME FROM ID plocation
         '''
         if p[3].lower() == 'parameters': 
             p[0] = ('newparam', p[2], p[5])
-        if p[3].lower() == 'dataframe': 
+        if p[3].lower() == 'dataframe' and p[4].lower() == 'from': 
             p[0] = ('newdataframe', p[2], p[5], p[6])
     
     def p_plocation(self, p):
