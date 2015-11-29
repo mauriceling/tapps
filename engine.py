@@ -37,8 +37,8 @@ parameters = \
  'results': Dataframe(),
 }
 
-plugin_categories = ['exporter',
-                     'importer',
+plugin_categories = ['importer',
+                     'exporter',
                      'statistics',
                      'statistics.hypothesis',
                      'statistics.model',

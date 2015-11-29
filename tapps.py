@@ -42,6 +42,8 @@ session = \
 {'cwd': os.getcwd(),
  'plugins': {'loadFail': {},
              'loaded': [],
+             'exporter': [],
+             'importer': [],
              'statistics': [],
              'statistics.hypothesis': [],
              'statistics.model': [],
