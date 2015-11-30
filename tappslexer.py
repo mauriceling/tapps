@@ -32,6 +32,7 @@ class TAPPSLexer(object):
                 'cwd': 'CWD',
                 'dataframe': 'DATAFRAME',
                 'delete': 'DELETE',
+                'describe': 'DESCRIBE',
                 'displayast': 'DISPLAYAST',
                 'fillin': 'FILLIN',
                 'float': 'FLOAT',

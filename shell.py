@@ -387,11 +387,51 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             param = self.session['parameters']
             del param[operand[0]]
         return None
+    
+    def do_describe(self, operand):
+        if operand[0] not in self.session['MDF'].frames: return None
+        else: df = self.session['MDF'].frames[operand[0]]
+        print('')
+        print('Describing Dataframe - %s' % df.name)
+        print('')
+        series_names = ','.join(df.series_names)
+        print('  Series Names: %s' % str(series_names))
+        print('  Number of Series: %s' % str(len(df.series_names)))
+        print('  Number of Labels (data rows): %s' % str(len(df.data)))
+        print('')
+        for sn in df.series_names:
+            index = df.series_names.index(sn)
+            sdata = [df.data[label][index] for label in df.data.keys()]
+            sdata.sort()
+            dtypes = {'string': 0, 'integer': 0, 'float': 0, 'unknown': 0}
+            for d in sdata:
+                if type(d) == type('str'): 
+                    dtypes['string'] = dtypes['string'] + 1
+                elif type(d) == type(1): 
+                    dtypes['integer'] = dtypes['integer'] + 1
+                elif type(d) == type(1.0): 
+                    dtypes['float'] = dtypes['float'] + 1
+                else:
+                    dtypes['unknown'] = dtypes['unknown'] + 1
+            print('  Series Name - %s' % str(sn))
+            print('  Minimum value in %s: %s' % (str(sn), str(sdata[0])))
+            print('  Maximum value in %s: %s' % (str(sn), str(sdata[-1])))
+            print('  Number of string data type values: %s' \
+                  % str(dtypes['string']))
+            print('  Number of integer data type values: %s' \
+                  % str(dtypes['integer']))
+            print('  Number of float data type values: %s' \
+                  % str(dtypes['float']))
+            print('  Number of unknown data type values: %s' \
+                  % str(dtypes['unknown']))
+            print('')
+        return None
         
     def command_processor(self, operator, operand):
         if operator == 'cast': self.do_cast(operand)
         if operator == 'deldataframe': self.do_deldataframe(operand)
         if operator == 'delparam': self.do_delparam(operand)
+        if operator == 'describe': self.do_describe(operand)
         if operator == 'duplicateframe': self.do_duplicateframe(operand)
         if operator == 'greedysearch': self.do_greedysearch(operand)
         if operator == 'idsearch': self.do_idsearch(operand)

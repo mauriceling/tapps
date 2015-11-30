@@ -44,6 +44,7 @@ class TAPPSParser(object):
                   | load_statement
                   | cast_statement
                   | show_statement
+                  | describe_statement
                   | shell_statement
                   | new_statement
                   | delete_statement
@@ -139,6 +140,12 @@ class TAPPSParser(object):
         if p[2].lower() == 'session': p[0] = ('show', 'session')
         if p[2].lower() == 'dataframe': p[0] = ('show', 'dataframe')
         if p[2].lower() == 'parameter': p[0] = ('show', 'parameter')
+    
+    def p_describe_statement(self, p):
+        '''
+        describe_statement : DESCRIBE ID
+        '''
+        p[0] = ('describe', p[2])
         
     def p_shell_statement(self, p):
         '''
