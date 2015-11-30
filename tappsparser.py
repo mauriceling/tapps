@@ -50,6 +50,7 @@ class TAPPSParser(object):
                   | delete_statement
                   | select_statement
                   | runplugin_statement
+                  | save_statement
         '''
         p[0] = p[1]
     
@@ -98,11 +99,14 @@ class TAPPSParser(object):
         '''
         load_statement : LOAD CSV FILENAME AS ID
                        | LOAD NOHEADER CSV FILENAME AS ID
+                       | LOAD SESSION FROM FILENAME
         '''
         if p[2].lower() == 'csv': 
             p[0] = ('loadcsv1', p[3], p[5])
         if p[2].lower() == 'noheader' and p[3].lower() == 'csv': 
-            p[0] = ('loadcsv2', p[4], p[65])
+            p[0] = ('loadcsv2', p[4], p[6])
+        if p[2].lower() == 'session': 
+            p[0] = ('loadsession', p[4])
     
     def p_cast_statement(self, p):
         '''
@@ -239,7 +243,14 @@ class TAPPSParser(object):
         runplugin_statement : RUNPLUGIN ID
         '''
         p[0] = ('runplugin', p[2])
-            
+    
+    def p_save_statement(self, p):
+        '''
+        save_statement : SAVE SESSION AS FILENAME
+        '''
+        if p[2].lower() == 'session':
+            p[0] = ('savesession', p[4])
+        
     #def p_error(self, p):
     #    print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
     

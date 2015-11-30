@@ -24,6 +24,7 @@ import sys
 import copy
 import random
 import traceback
+import pickle
 from datetime import datetime
 from pprint import pprint
     
@@ -37,11 +38,12 @@ from tappsparser import TAPPSParser
 class Shell(object):
     
     def __init__(self, session={}):
-        self.session = session
         self.parser = TAPPSParser()
         self.parser.build()
+        self.session = session
         self.history = {}
         self.bytecode = {}
+        self.count = 1
         self.environment = {'cwd': os.getcwd(),
                             'display_ast': False,
                             'fill-in': None,
@@ -427,6 +429,28 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             print('')
         return None
         
+    def do_savesession(self, operand):
+        filename = os.sep.join([self.environment['cwd'], operand[0]])
+        f = open(filename, 'wb')
+        data = [self.session,
+                self.history,
+                self.bytecode,
+                self.count,
+                self.environment]
+        pickle.dump(data, f, 0)
+        return None
+        
+    def do_loadsession(self, operand):
+        filename = os.sep.join([self.environment['cwd'], operand[0]])
+        f = open(filename, 'rb')
+        data = pickle.load(f)
+        self.session = data[0]
+        self.history = data[1]
+        self.bytecode = data[2]
+        self.count = data[3]
+        self.environment = data[4]
+        return None
+        
     def command_processor(self, operator, operand):
         if operator == 'cast': self.do_cast(operand)
         if operator == 'deldataframe': self.do_deldataframe(operand)
@@ -437,16 +461,18 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if operator == 'idsearch': self.do_idsearch(operand)
         if operator == 'loadcsv1': self.do_loadcsv(operand, 1)
         if operator == 'loadcsv2': self.do_loadcsv(operand, 2)
+        if operator == 'loadsession': self.do_loadsession(operand)
         if operator == 'newdataframe': self.do_newdataframe(operand)
         if operator == 'newparam': self.do_newparam(operand)
         if operator == 'pythonshell': self.do_pythonshell(operand)
         if operator == 'runplugin': self.do_runplugin(operand)
+        if operator == 'savesession': self.do_savesession(operand)
         if operator == 'set': self.do_set(operand)
         if operator == 'show': self.do_show(operand)
     
-    def interpret(self, statement, count):
+    def interpret(self, statement):
         try:
-            self.history[str(count)] = statement
+            self.history[str(self.count)] = statement
             if statement.lower() in ['copyright', 'copyright;',
                                      'credits', 'credits;',
                                      'exit', 'exit;',
@@ -458,38 +484,35 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             else:
                 bytecode = self.parser.parse(statement, 
                                              self.environment['display_ast'])
-                self.bytecode[str(count)] = bytecode
+                self.bytecode[str(self.count)] = bytecode
                 operator = bytecode[0]
                 if len(bytecode) == 1: 
                     operand = []
                 else: 
                     operand = bytecode[1:]
                 self.command_processor(operator, operand)
-            count = count + 1
+            self.count = self.count + 1
         except:
             error_message = list(self.formatExceptionInfo())
             for line in error_message:
                 if (type(line) == list):
                     for l in line: 
                         print(l)
-        return count
         
     def cmdloop(self):
         self.header()
-        count = 1
         while True:
-            statement = raw_input('TAPPS: %s> ' % str(count)).strip() 
-            count = self.interpret(statement, count)
-            if count == 'exit': return 0
+            statement = raw_input('TAPPS: %s> ' % str(self.count)).strip() 
+            if statement == 'exit': return 0
+            self.interpret(statement)
         return self.session
         
     def cmdscript(self, script):
-        count = 1
         for statement in script:
             statement = statement.strip()
-            print('Command #%s: %s' % (str(count), statement))
-            count = self.interpret(statement, count)
-            if count == 'exit': return 0
+            print('Command #%s: %s' % (str(self.count), statement))
+            if statement == 'exit': return 0
+            self.interpret(statement)
         return self.session
             
        

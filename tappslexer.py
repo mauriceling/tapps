@@ -52,6 +52,7 @@ class TAPPSLexer(object):
                 'real': 'REAL',
                 'results': 'RESULTS',
                 'runplugin': 'RUNPLUGIN',
+                'save': 'SAVE',
                 'select': 'SELECT',
                 'separator': 'SEPARATOR',
                 'session': 'SESSION',
