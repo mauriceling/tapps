@@ -328,8 +328,27 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             ndf = Dataframe(ndf_name)
             self.session['MDF'].addDataframe(ndf, False)
         return None
+    
+    def do_cast(self, operand):
+        if operand[0] == 'alpha': datatype = 'string'
+        if operand[0] == 'nonalpha': datatype = 'float'
+        if operand[0] == 'float': datatype = 'float'
+        if operand[0] == 'real': datatype = 'float'
+        if operand[0] == 'integer': datatype = 'integer'
+        df_name = operand[1]
+        series_names = operand[2]
+        if df_name not in self.session['MDF'].frames: return None
+        df = self.session['MDF'].frames[df_name]
+        if series_names[0] == 'all':
+            df.cast(datatype, 'error_replace', 'all')
+        else:
+            series_names = [s for s in series_names if s in df.series_names]
+            for s in series_names:
+                df.cast(datatype, 'error_replace', s)
+        return None
         
     def command_processor(self, operator, operand):
+        if operator == 'cast': self.do_cast(operand)
         if operator == 'greedysearch': self.do_greedysearch(operand)
         if operator == 'idsearch': self.do_idsearch(operand)
         if operator == 'loadcsv1': self.do_loadcsv(operand, 1)

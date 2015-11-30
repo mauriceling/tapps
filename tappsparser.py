@@ -42,6 +42,7 @@ class TAPPSParser(object):
         '''
         statement : set_statement
                   | load_statement
+                  | cast_statement
                   | show_statement
                   | shell_statement
                   | new_statement
@@ -100,7 +101,23 @@ class TAPPSParser(object):
             p[0] = ('loadcsv1', p[3], p[5])
         if p[2].lower() == 'noheader' and p[3].lower() == 'csv': 
             p[0] = ('loadcsv2', p[4], p[65])
-            
+    
+    def p_cast_statement(self, p):
+        '''
+        cast_statement : CAST id_list IN ID AS datatype
+        '''
+        p[0] = ('cast', p[6], p[4], p[2])
+    
+    def p_datatype(self, p):
+        '''
+        datatype : ALPHA
+                 | NONALPHA
+                 | FLOAT
+                 | REAL
+                 | INTEGER
+        '''
+        p[0] = p[1]
+        
     def p_show_statement(self, p):
         '''
         show_statement : SHOW ASTHISTORY
@@ -163,15 +180,16 @@ class TAPPSParser(object):
         '''
         p[0] = p[1]
         
-    # def p_id_list(self, p):
-        # '''
-        # id_list : ID
-                # | id_list DELIMITER ID
-        # '''
-        # if len(p) == 2:
-            # p[0] = [p[1]]
-        # if len(p) > 2:
-            # p[0] = p[1] + [p[3]]
+    def p_id_list(self, p):
+        '''
+        id_list : ALL
+                | ID
+                | id_list DELIMITER ID
+        '''
+        if len(p) == 2:
+            p[0] = [p[1]]
+        if len(p) > 2:
+            p[0] = p[1] + [p[3]]
         
     def p_value(self, p):
         '''
