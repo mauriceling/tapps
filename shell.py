@@ -233,6 +233,23 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         print('')
         return None
         
+    def show_parameter(self):
+        pname = self.session['parameters'].keys()
+        print('')
+        print('Current Parameter(s) (n = %s):' % str(len(pname)))
+        print('')
+        for n in pname:
+            param = self.session['parameters'][n]
+            print('  Parameter Name: %s' % str(n))
+            print('    Analysis Name: %s' % str(param['analysis_name']))
+            print('    Plugin Name: %s' % str(param['plugin_name']))
+            print('    Analytical Method: %s' % str(param['analytical_method']))
+            print('    Input Dataframe: %s' % str(param['dataframe']))
+            print('    Narrative: %s' % str(param[ 'narrative']))
+            print('')
+        print('')
+        return None
+        
     def do_show(self, operand):
         op = operand[0].lower()
         if op == 'asthistory': return self.show_asthistory()
@@ -242,6 +259,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if op == 'plugindata': return self.show_plugindata(operand)
         if op == 'session': return self.show_session()
         if op == 'dataframe': return self.show_dataframe()
+        if op == 'parameter': return self.show_parameter()
         return None
     
     def do_loadcsv(self, operand, version):

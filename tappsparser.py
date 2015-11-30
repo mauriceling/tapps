@@ -128,6 +128,7 @@ class TAPPSParser(object):
                        | SHOW PLUGIN ID 
                        | SHOW SESSION
                        | SHOW DATAFRAME
+                       | SHOW PARAMETER
         '''
         if p[2].lower() == 'asthistory': p[0] = ('show', 'asthistory')
         if p[2].lower() == 'environment': p[0] = ('show', 'environment')
@@ -137,6 +138,7 @@ class TAPPSParser(object):
             else: p[0] = ('show', 'plugindata', p[3])
         if p[2].lower() == 'session': p[0] = ('show', 'session')
         if p[2].lower() == 'dataframe': p[0] = ('show', 'dataframe')
+        if p[2].lower() == 'parameter': p[0] = ('show', 'parameter')
         
     def p_shell_statement(self, p):
         '''

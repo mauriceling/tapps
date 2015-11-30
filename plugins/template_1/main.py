@@ -14,6 +14,7 @@ parameters = \
  'analytical_method': None,
  'dataframe': None,
  'results': None,
+ 'narrative': None,
 }
 
 def main(parameters):
