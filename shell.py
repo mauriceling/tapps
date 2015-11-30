@@ -359,8 +359,21 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             self.session['MDF'].addDataframe(ndf, False)
         return None
         
+    def do_deldataframe(self, operand):
+        if operand[0] in self.session['MDF'].frames:
+            del self.session['MDF'].frames[operand[0]]
+        return None
+        
+    def do_delparam(self, operand):
+        if operand[0] in self.session['parameters']:
+            param = self.session['parameters']
+            del param[operand[0]]
+        return None
+        
     def command_processor(self, operator, operand):
         if operator == 'cast': self.do_cast(operand)
+        if operator == 'deldataframe': self.do_deldataframe(operand)
+        if operator == 'delparam': self.do_delparam(operand)
         if operator == 'duplicateframe': self.do_duplicateframe(operand)
         if operator == 'greedysearch': self.do_greedysearch(operand)
         if operator == 'idsearch': self.do_idsearch(operand)

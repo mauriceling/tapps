@@ -31,6 +31,7 @@ class TAPPSLexer(object):
                 'csv': 'CSV',
                 'cwd': 'CWD',
                 'dataframe': 'DATAFRAME',
+                'delete': 'DELETE',
                 'displayast': 'DISPLAYAST',
                 'fillin': 'FILLIN',
                 'float': 'FLOAT',

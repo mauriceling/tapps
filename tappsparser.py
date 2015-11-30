@@ -46,6 +46,7 @@ class TAPPSParser(object):
                   | show_statement
                   | shell_statement
                   | new_statement
+                  | delete_statement
                   | select_statement
                   | runplugin_statement
         '''
@@ -153,6 +154,16 @@ class TAPPSParser(object):
         if p[3].lower() == 'dataframe' and p[4].lower() == 'from': 
             p[0] = ('newdataframe', p[2], p[5], p[6])
     
+    def p_delete_statement(self, p):
+        '''
+        delete_statement : DELETE DATAFRAME ID
+                         | DELETE PARAMETERS ID
+        '''
+        if p[2].lower() == 'dataframe': 
+            p[0] = ('deldataframe', p[3])
+        if p[2].lower() == 'parameters': 
+            p[0] = ('delparam', p[3])
+        
     def p_plocation(self, p):
         '''
         plocation : RESULTS
