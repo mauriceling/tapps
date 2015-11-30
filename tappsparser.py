@@ -162,9 +162,12 @@ class TAPPSParser(object):
     
     def p_select_statement(self, p):
         '''
-        select_statement : SELECT FROM ID AS ID WHERE binop value
+        select_statement : SELECT FROM ID AS ID
+                         | SELECT FROM ID AS ID WHERE binop value
                          | SELECT FROM ID AS ID WHERE ID binop value
         '''
+        if len(p) == 6:
+            p[0] = ('duplicateframe', p[3], p[5])
         if len(p) == 9:
             p[0] = ('greedysearch', p[3], p[5], p[7], p[8])
         if len(p) == 10:

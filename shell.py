@@ -346,9 +346,22 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             for s in series_names:
                 df.cast(datatype, 'error_replace', s)
         return None
+    
+    def do_duplicateframe(self, operand):
+        df_name = operand[0]
+        ndf_name = operand[1]
+        if df_name in self.session['MDF'].frames:
+            df = self.session['MDF'].frames[df_name]
+            ndf = df.extractValue('*', '', ndf_name)
+            self.session['MDF'].addDataframe(ndf, False)
+        else:
+            ndf = Dataframe(ndf_name)
+            self.session['MDF'].addDataframe(ndf, False)
+        return None
         
     def command_processor(self, operator, operand):
         if operator == 'cast': self.do_cast(operand)
+        if operator == 'duplicateframe': self.do_duplicateframe(operand)
         if operator == 'greedysearch': self.do_greedysearch(operand)
         if operator == 'idsearch': self.do_idsearch(operand)
         if operator == 'loadcsv1': self.do_loadcsv(operand, 1)
