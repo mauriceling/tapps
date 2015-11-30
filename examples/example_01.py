@@ -32,7 +32,7 @@ show environment
 
 load csv STI_20151111_19871228.csv as STI
 
-new template parameters as testingA
+new template parameter as testingA
 set parameter analysis_name in testingA as test
 set parameter analytical_method in testingA as summation
 set parameter dataframe in testingA as STI

@@ -45,7 +45,6 @@ class TAPPSLexer(object):
                 'new': 'NEW',
                 'noheader': 'NOHEADER',
                 'nonalpha': 'NONALPHA',
-                'parameters': 'PARAMETERS',
                 'parameter': 'PARAMETER',
                 'plugin': 'PLUGIN',
                 'pythonshell': 'PYTHONSHELL',

@@ -146,10 +146,10 @@ class TAPPSParser(object):
         
     def p_new_statement(self, p):
         '''
-        new_statement : NEW ID PARAMETERS AS ID
+        new_statement : NEW ID PARAMETER AS ID
                       | NEW ID DATAFRAME FROM ID plocation
         '''
-        if p[3].lower() == 'parameters': 
+        if p[3].lower() == 'parameter': 
             p[0] = ('newparam', p[2], p[5])
         if p[3].lower() == 'dataframe' and p[4].lower() == 'from': 
             p[0] = ('newdataframe', p[2], p[5], p[6])
@@ -157,11 +157,11 @@ class TAPPSParser(object):
     def p_delete_statement(self, p):
         '''
         delete_statement : DELETE DATAFRAME ID
-                         | DELETE PARAMETERS ID
+                         | DELETE PARAMETER ID
         '''
         if p[2].lower() == 'dataframe': 
             p[0] = ('deldataframe', p[3])
-        if p[2].lower() == 'parameters': 
+        if p[2].lower() == 'parameter': 
             p[0] = ('delparam', p[3])
         
     def p_plocation(self, p):
