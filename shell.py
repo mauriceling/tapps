@@ -248,6 +248,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                 import engine as tapps_engine; \
                 session = self.session; \
                 environment = self.environment; \
+                dataframes = self.session['MDF'].frames; \
                 print(""); \
                 print("You had spawned a Python interpreter (sub-shell) in TAPPS"); \
                 print("Please use Ctrl-D to exit from this sub-shell"); \
