@@ -109,6 +109,7 @@ class TAPPSParser(object):
                        | SHOW PLUGIN LIST 
                        | SHOW PLUGIN ID 
                        | SHOW SESSION
+                       | SHOW DATAFRAME
         '''
         if p[2].lower() == 'asthistory': p[0] = ('show', 'asthistory')
         if p[2].lower() == 'environment': p[0] = ('show', 'environment')
@@ -117,6 +118,7 @@ class TAPPSParser(object):
             if p[3].lower() == 'list': p[0] = ('show', 'pluginlist')
             else: p[0] = ('show', 'plugindata', p[3])
         if p[2].lower() == 'session': p[0] = ('show', 'session')
+        if p[2].lower() == 'dataframe': p[0] = ('show', 'dataframe')
         
     def p_shell_statement(self, p):
         '''
@@ -187,6 +189,7 @@ class TAPPSParser(object):
     def p_id_value(self, p):
         '''
         id_value : ID
+                 | STRING
         '''
         p[0] = str(p[1])
             
@@ -196,8 +199,8 @@ class TAPPSParser(object):
         '''
         p[0] = ('runplugin', p[2])
             
-    def p_error(self, p):
-        print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
+    #def p_error(self, p):
+    #    print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
     
     def build(self, **kwargs):
         self.parser = yacc.yacc(module=self, **kwargs)

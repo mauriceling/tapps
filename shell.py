@@ -216,6 +216,23 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         print('')
         return None
         
+    def show_dataframe(self):
+        dataframes = self.session['MDF'].frames
+        print('')
+        print('Current Dataframe(s) (n = %s):' % str(len(dataframes)))
+        print('')
+        for df_name in dataframes.keys():
+            series_names = ','.join(dataframes[df_name].series_names)
+            print('  Dataframe Name: %s' % str(df_name))
+            print('  Series Names: %s' % str(series_names))
+            print('  Number of Series: %s' \
+                  % str(len(dataframes[df_name].series_names)))
+            print('  Number of Labels (data rows): %s' \
+                  % str(len(dataframes[df_name].data)))
+            print('')
+        print('')
+        return None
+        
     def do_show(self, operand):
         op = operand[0].lower()
         if op == 'asthistory': return self.show_asthistory()
@@ -224,6 +241,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if op == 'pluginlist': return self.show_pluginlist()
         if op == 'plugindata': return self.show_plugindata(operand)
         if op == 'session': return self.show_session()
+        if op == 'dataframe': return self.show_dataframe()
         return None
     
     def do_loadcsv(self, operand, version):
