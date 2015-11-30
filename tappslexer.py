@@ -52,18 +52,7 @@ class TAPPSLexer(object):
                 'set': 'SET',
                 'show': 'SHOW',
                 'where': 'WHERE',
-       # 'insert' : 'INSERT', 
-       # 'into'   : 'INTO',
-       # 'select' : 'SELECT',
-       # 'from'   : 'FROM',
-       # 'where'  : 'WHERE',
-       # 'order'  : 'ORDER',
-       # 'by'     : 'BY',
-       # 'values' : 'VALUES',
-       # 'and'    : 'AND',
-       # 'or'     : 'OR',
-       # 'not'    : 'NOT',
-                } 
+               } 
               
     tokens = ['NUMBER',
               'FOLDER',
@@ -80,8 +69,6 @@ class TAPPSLexer(object):
               'MINUS',
               'TIMES',      
               'DIVIDE',
-              'LPAREN',     
-              'RPAREN',
               'GT', 
               'GE',
               'LT',
@@ -141,8 +128,8 @@ class TAPPSLexer(object):
     t_MINUS = r'-'
     t_TIMES = r'\*'
     t_DIVIDE = r'/'
-    t_LPAREN = r'\('
-    t_RPAREN = r'\)'
+    #t_LPAREN = r'\('
+    #t_RPAREN = r'\)'
     t_GT = r'>'
     t_GE = r'>='
     t_LT = r'<'
