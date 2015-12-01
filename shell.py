@@ -104,6 +104,9 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if statement == 'license': return self.do_license()
         if statement == 'quit': return 'exit'
         
+    def error_message(self, code, msg):
+        print('%s: %s' % (str(code), str(msg)))
+        
     def do_set(self, operand):
         op = operand[0].lower()
         if op == 'displayast':
@@ -303,6 +306,15 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                 df = copy.deepcopy(self.session['parameters'][paramD_name][df_in_paramD])
                 df.name = new_df_name
                 self.session['MDF'].addDataframe(df, False)
+            else:
+                code = 'Error/001'
+                message = 'Dataframe name, %s, is not found in Parameters %s' \
+                          % (df_in_paramD, paramD_name)
+                self.error_message(code, message)
+        else:
+            code = 'Error/002'
+            message = 'Parameters name, %s, is not found' % (paramD_name)
+            self.error_message(code, message)
         return None
         
     def do_newparam(self, operand):
@@ -316,6 +328,10 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         paramD_name = operand[0]
         if paramD_name in self.session['parameters']:
             e.RunPlugin(self.session, paramD_name)
+        else:
+            code = 'Error/003'
+            message = 'Parameters name, %s, is not found' % (paramD_name)
+            self.error_message(code, message)
         return None
     
     def do_greedysearch(operand):
@@ -331,6 +347,10 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         else:
             ndf = Dataframe(ndf_name)
             self.session['MDF'].addDataframe(ndf, False)
+            code = 'Warning/004'
+            message = 'Dataframe name, %s, is not found. An empty dataframe is added.' \
+                      % (df_name)
+            self.error_message(code, message)
         return None
         
     def do_idsearch(self, operand):
@@ -347,6 +367,10 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         else:
             ndf = Dataframe(ndf_name)
             self.session['MDF'].addDataframe(ndf, False)
+            code = 'Warning/005'
+            message = 'Dataframe name, %s, is not found. An empty dataframe is added.' \
+                      % (df_name)
+            self.error_message(code, message)
         return None
     
     def do_cast(self, operand):
@@ -357,11 +381,21 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if operand[0] == 'integer': datatype = 'integer'
         df_name = operand[1]
         series_names = operand[2]
-        if df_name not in self.session['MDF'].frames: return None
+        if df_name not in self.session['MDF'].frames: 
+            code = 'Error/006'
+            message = 'Dataframe name, %s, is not found' % (df_name)
+            self.error_message(code, message)
+            return None
         df = self.session['MDF'].frames[df_name]
         if series_names[0] == 'all':
             df.cast(datatype, 'error_replace', 'all')
         else:
+            error_sn = [s for s in series_names if s not in df.series_names]
+            if len(error_sn) > 0:
+                code = 'Warning/013'
+                message = 'The following series name(s) are not found and not casted: %s' \
+                          % (' ,'.join(error_sn))
+                self.error_message(code, message)
             series_names = [s for s in series_names if s in df.series_names]
             for s in series_names:
                 df.cast(datatype, 'error_replace', s)
@@ -377,22 +411,41 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         else:
             ndf = Dataframe(ndf_name)
             self.session['MDF'].addDataframe(ndf, False)
+            code = 'Warning/007'
+            message = 'Dataframe name, %s, is not found. An empty dataframe is added.' \
+                      % (df_name)
+            self.error_message(code, message)
         return None
         
     def do_deldataframe(self, operand):
         if operand[0] in self.session['MDF'].frames:
             del self.session['MDF'].frames[operand[0]]
+        else:
+            code = 'Warning/008'
+            message = 'Dataframe name, %s, is not found. No dataframe deleted' \
+                      % (operand[0])
+            self.error_message(code, message)
         return None
         
     def do_delparam(self, operand):
         if operand[0] in self.session['parameters']:
             param = self.session['parameters']
             del param[operand[0]]
+        else:
+            code = 'Warning/009'
+            message = 'Parameter, %s, is not found. No parameters deleted' \
+                      % (operand[0])
+            self.error_message(code, message)
         return None
     
     def do_describe(self, operand):
-        if operand[0] not in self.session['MDF'].frames: return None
-        else: df = self.session['MDF'].frames[operand[0]]
+        if operand[0] not in self.session['MDF'].frames: 
+            code = 'Error/010'
+            message = 'Dataframe name, %s, is not found' % (operand[0])
+            self.error_message(code, message)
+            return None
+        else: 
+            df = self.session['MDF'].frames[operand[0]]
         print('')
         print('Describing Dataframe - %s' % df.name)
         print('')
