@@ -541,10 +541,62 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_mergelabels1(self, operand):
-        pass
+        source_df = operand[0]
+        destination_df = operand[1]
+        if source_df not in self.session['MDF'].frames:
+            code = 'Error/016'
+            message = 'Dataframe name (source), %s, is not found' % (source_df)
+            self.error_message(code, message)
+            return None
+        else:
+            sdf = self.session['MDF'].frames[source_df]
+        if destination_df not in self.session['MDF'].frames: 
+            code = 'Error/017'
+            message = 'Dataframe name (destination), %s, is not found' % (destination_df)
+            self.error_message(code, message)
+            return None
+        else:
+            ddf = self.session['MDF'].frames[destination_df]
+        if sdf.series_names != ddf.series_names:
+            code = 'Error/020'
+            message = 'Destination series name(s), %s, do not match source series name(s), %s' \
+                      % (str(ddf.series_names), str(sdf.series_names))
+            self.error_message(code, message)
+            return None
+        ddf_labels = ddf.data.keys()
+        keylist = [k for k in sdf.data.keys() if k not in ddf_labels]
+        for label in keylist:
+            ddf.data[label] = [x for x in sdf.data[label]]
+        ddf.series_names = ddf.series_names + keylist
+        return None
     
     def do_mergelabels2(self, operand):
-        pass
+        source_df = operand[0]
+        destination_df = operand[1]
+        if source_df not in self.session['MDF'].frames:
+            code = 'Error/018'
+            message = 'Dataframe name (source), %s, is not found' % (source_df)
+            self.error_message(code, message)
+            return None
+        else:
+            sdf = self.session['MDF'].frames[source_df]
+        if destination_df not in self.session['MDF'].frames: 
+            code = 'Error/019'
+            message = 'Dataframe name (destination), %s, is not found' % (destination_df)
+            self.error_message(code, message)
+            return None
+        else:
+            ddf = self.session['MDF'].frames[destination_df]
+        if sdf.series_names != ddf.series_names:
+            code = 'Error/021'
+            message = 'Destination series name(s), %s, do not match source series name(s), %s' \
+                      % (str(ddf.series_names), str(sdf.series_names))
+            self.error_message(code, message)
+            return None
+        for label in sdf.data.keys():
+            ddf.data[label] = [x for x in sdf.data[label]]
+        ddf.series_names = ddf.series_names + sdf.data.keys()
+        return None
         
     def do_renameseries(self, operand):
         pass
