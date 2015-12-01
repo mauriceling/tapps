@@ -72,8 +72,8 @@ class TAPPSParser(object):
      
     def p_rename_statement(self, p):
         '''
-        rename_statement : RENAME SERIES IN ID FROM ID TO ID
-                         | RENAME LABELS IN ID FROM ID TO ID
+        rename_statement : RENAME SERIES IN ID FROM id_value TO id_value
+                         | RENAME LABELS IN ID FROM id_value TO id_value
         '''
         if p[2].lower() == 'series': 
             p[0] = ('renameseries', p[4], p[6], p[8])

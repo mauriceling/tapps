@@ -567,7 +567,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         keylist = [k for k in sdf.data.keys() if k not in ddf_labels]
         for label in keylist:
             ddf.data[label] = [x for x in sdf.data[label]]
-        ddf.series_names = ddf.series_names + keylist
+        ddf.label = ddf.data.keys()
         return None
     
     def do_mergelabels2(self, operand):
@@ -595,14 +595,49 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             return None
         for label in sdf.data.keys():
             ddf.data[label] = [x for x in sdf.data[label]]
-        ddf.series_names = ddf.series_names + sdf.data.keys()
+        ddf.label = ddf.data.keys()
         return None
         
     def do_renameseries(self, operand):
-        pass
+        old_name = operand[1]
+        new_name = operand[2]
+        if operand[0] not in self.session['MDF'].frames:
+            code = 'Error/022'
+            message = 'Dataframe name, %s, is not found' % (operand[0])
+            self.error_message(code, message)
+            return None
+        else:
+            df = self.session['MDF'].frames[operand[0]]
+        try:
+            index = df.series_names.index(old_name)
+            df.series_names[index] = new_name
+        except ValueError:
+            code = 'Error/024'
+            message = 'Series name, %s, is not found' % (old_name)
+            self.error_message(code, message)
+        return None
         
     def do_renamelabels(self, operand):
-        pass
+        old_name = operand[1]
+        new_name = operand[2]
+        if operand[0] not in self.session['MDF'].frames:
+            code = 'Error/023'
+            message = 'Dataframe name, %s, is not found' % (operand[0])
+            self.error_message(code, message)
+            return None
+        else:
+            df = self.session['MDF'].frames[operand[0]]
+        if old_name not in df.data.keys():
+            code = 'Error/025'
+            message = 'Label name, %s, is not found' % (old_name)
+            self.error_message(code, message)
+            return None
+        index = df.label.index(old_name)
+        df.label[index] = new_name
+        data = [x for x in df.data[old_name]]
+        df.data[new_name] = data
+        del df.data[old_name]
+        return None
         
     def command_processor(self, operator, operand):
         if operator == 'cast': self.do_cast(operand)
