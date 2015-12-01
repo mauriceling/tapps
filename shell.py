@@ -451,6 +451,54 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         self.environment = data[4]
         return None
         
+    def do_mergeseries(self, operand):
+        series_names = operand[0]
+        source_df = operand[1]
+        destination_df = operand[2]
+        if source_df not in self.session['MDF'].frames:
+            code = 'Error/011'
+            message = 'Dataframe name (source), %s, is not found' % (source_df)
+            self.error_message(code, message)
+            return None
+        else:
+            sdf = self.session['MDF'].frames[source_df]
+        if destination_df not in self.session['MDF'].frames: 
+            code = 'Error/012'
+            message = 'Dataframe name (destination), %s, is not found' % (destination_df)
+            self.error_message(code, message)
+            return None
+        else:
+            ddf = self.session['MDF'].frames[destination_df]
+        error_sn = [s for s in series_names if s not in sdf.series_names]
+        if len(error_sn) > 0:
+            code = 'Error/014'
+            message = 'The following series name(s), %s, are not found in %s' \
+                      % (' ,'.join(error_sn), source_df)
+            self.error_message(code, message)
+        series_names = [s for s in series_names if s in sdf.series_names]
+        for sn in series_names:
+            if sn in ddf.series_names:
+                code = 'Warning/015'
+                message = 'Series name, %s, is found in destination dataframe and is not merged' \
+                          % (' ,'.join(error_sn))
+                self.error_message(code, message)
+            else:
+                s = sdf.toSeries(sn)
+                ddf.addSeries(s, None)
+        return None
+    
+    def do_mergelabels1(self, operand):
+        pass
+    
+    def do_mergelabels2(self, operand):
+        pass
+        
+    def do_renameseries(self, operand):
+        pass
+        
+    def do_renamelabels(self, operand):
+        pass
+        
     def command_processor(self, operator, operand):
         if operator == 'cast': self.do_cast(operand)
         if operator == 'deldataframe': self.do_deldataframe(operand)
@@ -462,9 +510,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if operator == 'loadcsv1': self.do_loadcsv(operand, 1)
         if operator == 'loadcsv2': self.do_loadcsv(operand, 2)
         if operator == 'loadsession': self.do_loadsession(operand)
+        if operator == 'mergelabels1': self.do_mergelabels1(operand)
+        if operator == 'mergelabels2': self.do_mergelabels2(operand)
+        if operator == 'mergeseries': self.do_mergeseries(operand)
         if operator == 'newdataframe': self.do_newdataframe(operand)
         if operator == 'newparam': self.do_newparam(operand)
         if operator == 'pythonshell': self.do_pythonshell(operand)
+        if operator == 'renameseries': self.do_renameseries(operand)
+        if operator == 'renamelabels': self.do_renamelabels(operand)
         if operator == 'runplugin': self.do_runplugin(operand)
         if operator == 'savesession': self.do_savesession(operand)
         if operator == 'set': self.do_set(operand)
@@ -516,7 +569,6 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return self.session
             
        
-    
 if __name__ == '__main__':
     from tapps import session
     shell = Shell(session)

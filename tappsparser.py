@@ -51,9 +51,35 @@ class TAPPSParser(object):
                   | select_statement
                   | runplugin_statement
                   | save_statement
+                  | merge_statement
+                  | rename_statement
         '''
         p[0] = p[1]
     
+    def p_merge_statement(self, p):
+        '''
+        merge_statement : MERGE SERIES id_list FROM ID TO ID
+                        | MERGE LABELS FROM ID TO ID
+                        | MERGE REPLACE LABELS FROM ID TO ID
+                        
+        '''
+        if p[2].lower() == 'series': 
+            p[0] = ('mergeseries', p[3], p[5], p[7])
+        if p[2].lower() == 'labels': 
+            p[0] = ('mergelabels1', p[4], p[6])
+        if p[2].lower() == 'replace' and p[3].lower() == 'labels': 
+            p[0] = ('mergelabels2', p[5], p[7])
+     
+    def p_rename_statement(self, p):
+        '''
+        rename_statement : RENAME SERIES IN ID FROM ID TO ID
+                         | RENAME LABELS IN ID FROM ID TO ID
+        '''
+        if p[2].lower() == 'series': 
+            p[0] = ('renameseries', p[4], p[6], p[8])
+        if p[2].lower() == 'labels': 
+            p[0] = ('renamelabels', p[4], p[6], p[8])
+        
     def p_set_statement(self, p):
         '''
         set_statement : SET DISPLAYAST ID
