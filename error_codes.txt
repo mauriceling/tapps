@@ -1,0 +1,17 @@
+Code;Bytecode;Message;Description
+Error/001;newdataframe;Dataframe name, <name>, is not found in Parameters <name>;
+Error/002;newdataframe;Parameters name, <name>, is not found;
+Error/003;runplugin;Parameters name, <name>, is not found;
+Warning/004;greedysearch;Dataframe name, <name>, is not found. An empty dataframe is added;
+Warning/005;idsearch;Dataframe name, <name>, is not found. An empty dataframe is added;
+Error/006;cast;Dataframe name, <name>, is not found;
+Warning/007;duplicateframe;Dataframe name, <name>, is not found. An empty dataframe is added;
+Warning/008;deldataframe;Dataframe name, <name>, is not found. No dataframe deleted;
+Warning/009;delparam;Parameter, <name>, is not found. No parameters deleted;
+Error/010;describe;Dataframe name, <name>, is not found;
+Error/011;mergeseries;Dataframe name (source), <name>, is not found;
+Error/012;mergeseries;Dataframe name (destination), <name>, is not found;
+Warning/013;cast;The following series name(s) are not found and not casted: <names>;
+Error/014;mergeseries;The following series name(s), <names>, are not found in <name>;
+Warning/015;mergeseries;Series name, <name>, is found in destination dataframe and is not merged;
+
