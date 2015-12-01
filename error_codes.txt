@@ -14,4 +14,9 @@ Error/012;mergeseries;Dataframe name (destination), <name>, is not found;
 Warning/013;cast;The following series name(s) are not found and not casted: <names>;
 Error/014;mergeseries;The following series name(s), <names>, are not found in <name>;
 Warning/015;mergeseries;Series name, <name>, is found in destination dataframe and is not merged;
-
+Error/016;mergelabels1;Dataframe name (source), <name>, is not found;
+Error/017;mergelabels1;Dataframe name (destination), <name>, is not found;
+Error/018;mergelabels2;Dataframe name (source), <name>, is not found;
+Error/019;mergelabels2;Dataframe name (destination), <name>, is not found;
+Error/020;mergelabels1;Destination series name(s), <name>, do not match source series name(s), <name>;
+Error/021;mergelabels2;Destination series name(s), <name>, do not match source series name(s), <name>;
