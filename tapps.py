@@ -204,17 +204,45 @@ def AttachNewDataFrame(session, dataframe_name):
     return session
     
 def NewPluginParameters(session, plugin_name=''):
+    '''
+    Function to duplicate parameters dictionary of a specific plugin.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param plugin_name: name of plugin to get new parameters for.
+    @type plugin_name: string
+    @return: plugin parameters dictionary
+    '''
     return e.NewPluginParameters(session, plugin_name)
     
 def RunShell(session):
+    '''
+    Function to execute TAPPS command-line shell and virtual machine.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    '''
     shell = s.Shell(session)
     shell.cmdloop()
 
-    
 def RunScript(session, scriptfile):
+    '''
+    Function to execute script file written in TAPPS language.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param scriptfile: absolute path to TAPPS script file in the format of 
+    a list.
+    '''
     dirname = scriptfile[:-1]
+    print('')
+    print('Executing script file: %s' % os.sep.join(scriptfile))
+    print('')
     def process_script(scriptfile):
         scriptfile = os.sep.join(scriptfile)
+        print('')
+        print('Reading script file: %s' % scriptfile)
+        print('')
         script = open(scriptfile, 'r').readlines()
         script = [x[:-1] for x in script]
         script = [x.strip() for x in script]
@@ -268,6 +296,14 @@ if __name__ == '__main__':
         print('If no option is given (i.e. python tapps.py), TAPPS command')
         print('line shell will be launched for interactive usage.')
         print('')
-        print("If option = 'script' (i.e. python tapps.py script <script file>),") 
-        print('a script file name must be given. The script file written in')
-        print('TAPPS scripting language will be executed.')
+        print("If option = 'relativescript' (i.e. python tapps.py ") 
+        print('relativescript <script file>), a script file name (relative ')
+        print('path to the current directory) must be given. For example, ')
+        print('python tapps.py relativescript examples/example_01.py, will ')
+        print('mean that the script in <current working directory/examples')
+        print('/example_01.py will be executed. The script file written in')
+        print('TAPPS language will be executed.')
+        print('')
+        print("If option = 'nonrelativescript', (i.e. python tapps.py ") 
+        print('nonrelativescript <script file>), the full path to the ')
+        print('scriptfile must be given.')

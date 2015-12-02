@@ -311,6 +311,15 @@ def AttachNewDataFrame(session, dataframe_name):
     return session
     
 def NewPluginParameters(session, plugin_name=''):
+    '''
+    Function to duplicate parameters dictionary of a specific plugin.
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param plugin_name: name of plugin to get new parameters for.
+    @type plugin_name: string
+    @return: plugin parameters dictionary
+    '''
     if plugin_name == '':
         return copy.deepcopy(parameters)
     else:
