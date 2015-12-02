@@ -209,19 +209,40 @@ def NewPluginParameters(session, plugin_name=''):
 def RunShell(session):
     shell = s.Shell(session)
     shell.cmdloop()
+
     
 def RunScript(session, scriptfile):
+    dirname = scriptfile[:-1]
+    def process_script(scriptfile):
+        scriptfile = os.sep.join(scriptfile)
+        script = open(scriptfile, 'r').readlines()
+        script = [x[:-1] for x in script]
+        script = [x.strip() for x in script]
+        for i in range(len(script)):
+            if script[i].startswith('@include'):
+                f = script[i].split(' ')[1].strip()
+                script[i] = process_script(dirname + [f])
+        return script
+    def flatten(container):
+        for i in container:
+            if isinstance(i, list) or isinstance(i, tuple):
+                for j in flatten(i):
+                    yield j
+            else:
+                yield i
+    fullscript = process_script(scriptfile)
+    fullscript = list(flatten(fullscript))
+    fullscript = [x for x in fullscript if x != '']
+    fullscript = [x for x in fullscript if not x.startswith('#')]
     shell = s.Shell(session)
-    script = open(scriptfile, 'r').readlines()
-    script = [x[:-1] for x in script]
-    script = [x.strip() for x in script]
-    script = [x for x in script 
-                  if (x != '') or x.startswith('#')]
-    shell.cmdscript(script)
+    shell.cmdscript(fullscript)
     
 def RunNonShell(session, argv):
     if argv[1].lower() == 'script':
-        RunScript(session, argv[2])
+        cwd = os.getcwd()
+        scriptfile = [x for x in argv[2].split(os.sep)]
+        scriptfile = [cwd] + scriptfile
+        RunScript(session, scriptfile)
     
 session = startup(session)
 
