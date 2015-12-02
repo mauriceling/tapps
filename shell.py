@@ -522,6 +522,8 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             return None
         else:
             ddf = self.session['MDF'].frames[destination_df]
+        if series_names[0].lower() == 'all':
+            series_names = [s for s in sdf.series_names]
         error_sn = [s for s in series_names if s not in sdf.series_names]
         if len(error_sn) > 0:
             code = 'Error/014'
