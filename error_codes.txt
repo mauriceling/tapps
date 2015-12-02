@@ -20,3 +20,8 @@ Error/018;mergelabels2;Dataframe name (source), <name>, is not found;
 Error/019;mergelabels2;Dataframe name (destination), <name>, is not found;
 Error/020;mergelabels1;Destination series name(s), <name>, do not match source series name(s), <name>;
 Error/021;mergelabels2;Destination series name(s), <name>, do not match source series name(s), <name>;
+Error/022;renameseries;Dataframe name, <name>, is not found;
+Error/023;renamelabels;Dataframe name, <name>, is not found;
+Error/024;renameseries;Series name, <name>, is not found;
+Error/025;renamelabels;Label name, <name>, is not found;
+
