@@ -266,10 +266,24 @@ def RunScript(session, scriptfile):
     shell.cmdscript(fullscript)
     
 def RunNonShell(session, argv):
-    if argv[1].lower() == 'script':
+    '''
+    Function to execute TAPPS without command-line shell. Usually, this is 
+    used to execute TAPPS script file. 
+    
+    @param session: dictionary to hold all data within the current session. 
+    Please see module documentation for more details.
+    @param argv: command line options from operating system. Allowable 
+    options are:
+        - ['tapps.py', 'relativescript', <relative path to script>]
+        - ['tapps.py', 'absolutescript', <absolute path to script>]
+    '''
+    if argv[1].lower() == 'relativescript':
         cwd = os.getcwd()
         scriptfile = [x for x in argv[2].split(os.sep)]
-        scriptfile = [cwd] + scriptfile
+        scriptfile = cwd.split(os.sep) + scriptfile
+        RunScript(session, scriptfile)
+    if argv[1].lower() == 'absolutescript':
+        scriptfile = [x for x in argv[2].split(os.sep)]
         RunScript(session, scriptfile)
     
 session = startup(session)
