@@ -10,6 +10,14 @@ instructions = '''
 Provides user readable instructions on what the operations of the current 
 plugin, how to fill-in the parameters dictionary, and what options are 
 required/allowed by the plugin.
+
+How to fill in parameters dictionary (p):
+Standard instructions:
+    p['analysis_name'] = <user given name of analysis in string>
+    p['narrative'] = <user given description of analysis, if any>
+    p['dataframe'] = <input dataframe object from session['MDF'].frames>
+Instructions specific to this plugin:
+    etc etc
 '''
 
 parameters = \
