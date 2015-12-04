@@ -285,6 +285,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
     
     def do_pythonshell(self, operand):
         exec('''import code; \
+                from pprint import pprint; \
                 from tapps import *; \
                 import engine as tapps_engine; \
                 session = self.session; \
