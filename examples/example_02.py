@@ -6,14 +6,16 @@
 
 load csv STI_2015.csv as STI
 
-new template parameter as testingA
+new summarize parameter as testingA
 set parameter analysis_name in testingA as test
-set parameter analytical_method in testingA as summation
+set parameter analytical_method in testingA as by_series
 set parameter dataframe in testingA as STI
 
 runplugin testingA
 
-new STI_summation dataframe from testingA results
+new STI_summarize dataframe from testingA results
+
+pythonshell
 
 # The Python equivalent of the above will be:
 # import os
@@ -26,11 +28,11 @@ new STI_summation dataframe from testingA results
                     # 'STI_2015.csv']))
 # session = AttachNewDataFrame(session, 'STI')
 # 
-# testingA = NewPluginParameters(session, 'template')
+# testingA = NewPluginParameters(session, 'summarize')
 # testingA['analysis_name'] = 'test'
 # testingA['plugin_name'] = 'template'
 # testingA['dataframe'] = session['MDF'].frames['STI']
-# testingA['analytical_method'] = 'summation'
+# testingA['analytical_method'] = 'by_series'
 # session['parameters']['testingA'] = testingA
 # 
 # RunPlugin(session, 'testingA')
