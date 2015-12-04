@@ -57,10 +57,10 @@ def main(parameters):
     
     # Step 2: Perform plugin operations
     if method == 'by_series' or method == None:
-        (statistics, labels) = series(dataframe)
+        (statistics, labels) = summarize_series(dataframe)
         results.addData(statistics, labels)
     if method == 'by_labels':
-        (data, series) = labels(dataframe)
+        (data, series) = summarize_labels(dataframe)
         results.data = data
         results.label = data.keys()
         results.series_names = series
@@ -72,7 +72,7 @@ def main(parameters):
     # END Step 3: Load dataframe and results back into parameters dictionary
     return parameters
 
-def series(dataframe):
+def summarize_series(dataframe):
     '''
     Function to statistical summaries of each series in the dataframe.
     '''
@@ -112,7 +112,7 @@ def series(dataframe):
         statistics['standard_deviation'].append((s**0.5))
     return (statistics, series)
  
-def labels(dataframe):
+def summarize_labels(dataframe):
     '''
     Function to statistical summaries of each label in the dataframe.
     '''
@@ -160,4 +160,3 @@ def labels(dataframe):
         temp[6] = sum(data)
         data[label] = [x for x in temp]
     return (data, series)
-    
