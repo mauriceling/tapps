@@ -46,7 +46,7 @@ mean, (2) count, (3) maximum value, (4) median, (5) minimum value,
 (6) standard deviation, (7) summation'''
 
 # URL of this project, if any (not mandatory)
-projectURL = 'https://github.com/mauriceling/tapps/plugins/summarize_1'
+projectURL = 'https://github.com/mauriceling/tapps/tree/master/plugins/summarize_1'
 
 # Person(s) to contact for any help or information regarding this plugin / app
 # (not mandatory)
