@@ -214,8 +214,10 @@ def GetPlugins(session, path):
     @type path: string
     @return: session dictionary
     '''
-    # print path, [x for x in os.walk(path)]
+    # print path, os.walk(path), [x for x in os.walk(path)]
     plugin_directories = [x for x in os.walk(path)][0][1]
+    plugin_directories = [x for x in plugin_directories
+                          if x not in ['template_1', 'Template_1']]
     for plugin in plugin_directories:
         session = LoadPlugin(session, plugin)
     for category in plugin_categories:
