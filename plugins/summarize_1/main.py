@@ -155,8 +155,8 @@ def summarize_labels(dataframe):
         else:
             s = float(sum([(x-temp[0])**2 
                            for x in sdata])) / len(sdata)
-        temp[5] = s
+        temp[5] = s ** 0.5
         # 7: summation
-        temp[6] = sum(data)
+        temp[6] = sum(sdata)
         data[label] = [x for x in temp]
     return (data, series)
