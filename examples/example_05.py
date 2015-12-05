@@ -4,7 +4,9 @@
 
 @include example_04.py
 
-set cwd /Users/mauriceling/Dropbox/MyProjects/tapps/examples
+set ocwd
+
+set rcwd examples
 
 save session as example05.txt
 

@@ -262,7 +262,7 @@ def RunScript(session, scriptfile):
     fullscript = list(flatten(fullscript))
     fullscript = [x for x in fullscript if x != '']
     fullscript = [x for x in fullscript if not x.startswith('#')]
-    shell = s.Shell(session)
+    shell = s.Shell(session, 'TAPPS')
     shell.cmdscript(fullscript)
     
 def RunNonShell(session, argv):

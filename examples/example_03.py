@@ -2,7 +2,7 @@
 # Example 03: Type casting and data extraction (selection)
 #################################################################
 
-set cwd /Users/mauriceling/Dropbox/MyProjects/tapps/data
+set rcwd data
 
 load csv STI_2015.csv as STI
 

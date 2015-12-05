@@ -2,7 +2,7 @@
 # Example 01: Setting up environment and display loaded plugins
 #################################################################
 
-set cwd /Users/mauriceling/Dropbox/MyProjects/tapps/data
+set rcwd data
 set separator ,
 set fillin None
 

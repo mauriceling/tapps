@@ -2,7 +2,7 @@
 # Example 06: Rename series and merge
 #################################################################
 
-set cwd /Users/mauriceling/Dropbox/MyProjects/tapps/data
+set rcwd data
 
 load csv STI_2015.csv as STI
 
