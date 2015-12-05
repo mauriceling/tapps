@@ -86,15 +86,19 @@ class TAPPSParser(object):
                       | SET CWD FOLDER
                       | SET SEPARATOR separators
                       | SET FILLIN fillin_options
+                      | SET OCWD
                       | SET PARAMETER ID IN ID AS ID
                       | SET PARAMETER DATAFRAME IN ID AS ID
+                      | SET RCWD ID
         '''
         if p[2].lower() == 'displayast': p[0] = ('set', 'displayast', p[3])
         if p[2].lower() == 'cwd': p[0] = ('set', 'cwd', p[3])
         if p[2].lower() == 'separator': p[0] = ('set', 'separator', p[3])
         if p[2].lower() == 'fillin': p[0] = ('set', 'fill-in', p[3])
+        if p[2].lower() == 'ocwd': p[0] = ('set', 'ocwd')
         if p[2].lower() == 'parameter': 
             p[0] = ('set', 'parameter', p[3], p[5], p[7])
+        if p[2].lower() == 'rcwd': p[0] = ('set', 'rcwd', p[3])
     
     def p_fillin_options(self, p):
         '''

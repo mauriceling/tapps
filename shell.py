@@ -37,8 +37,9 @@ from tappsparser import TAPPSParser
 
 class Shell(object):
     
-    def __init__(self, session={}):
-        self.parser = TAPPSParser()
+    def __init__(self, session={}, language='TAPPS'):
+        if language == 'TAPPS':
+            self.parser = TAPPSParser()
         self.parser.build()
         self.session = session
         self.history = {}
@@ -47,6 +48,7 @@ class Shell(object):
         self.environment = {'cwd': os.getcwd(),
                             'display_ast': False,
                             'fill-in': None,
+                            'ocwd': os.getcwd(),
                             'separator': ',',
                            }
     
@@ -117,6 +119,13 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if op == 'cwd':
             self.environment['cwd'] = operand[1]
             self.session['cwd'] = operand[1]
+        if op == 'ocwd':
+            self.environment['cwd'] = self.environment['ocwd']
+            self.session['cwd'] = self.environment['ocwd']
+        if op == 'rcwd':
+            cwd = os.sep.join([self.environment['cwd'], operand[1]])
+            self.environment['cwd'] = cwd
+            self.session['cwd'] = cwd
         if op == 'separator':
             self.environment['separator'] = operand[1]
         if op == 'fill-in':

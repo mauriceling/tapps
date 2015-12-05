@@ -215,14 +215,14 @@ def NewPluginParameters(session, plugin_name=''):
     '''
     return e.NewPluginParameters(session, plugin_name)
     
-def RunShell(session):
+def RunShell(session, language):
     '''
-    Function to execute TAPPS command-line shell and virtual machine.
+    Function to execute command-line shell and virtual machine.
     
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
     '''
-    shell = s.Shell(session)
+    shell = s.Shell(session, language)
     shell.cmdloop()
 
 def RunScript(session, scriptfile):
@@ -291,7 +291,7 @@ session = startup(session)
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
-        RunShell(session)
+        RunShell(session, 'TAPPS')
         sys.exit()
     if len(sys.argv) == 3:
         RunNonShell(session, sys.argv)
