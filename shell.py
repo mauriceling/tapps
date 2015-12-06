@@ -149,6 +149,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         print('%s: %s' % (str(code), str(msg)))
         
     def do_set(self, operand):
+        '''
+        Method to set options in environment or within plugin parameters set.
+        
+        Operand = [<object to show>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         op = operand[0].lower()
         if op == 'displayast':
             if operand[1].lower() in ['t', 'true']:
@@ -195,6 +203,9 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
     
     def show_environment(self):
         '''
+        Method to show environmental parameters.
+        
+        Operand = []
         
         @param operand: bytecode operand(s), if any
         @type operand: list
@@ -209,6 +220,15 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def show_asthistory(self):
+        '''
+        Method to show abstract syntax tree(s) (the bytecode tree(s)) for all 
+        executed commands.
+        
+        Operand = []
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         line_number = self.bytecode.keys()
         line_number.sort()
         print('')
@@ -218,6 +238,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def show_history(self):
+        '''
+        Method to show all executed commands.
+        
+        Operand = []
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         line_number = self.history.keys()
         line_number.sort()
         print('')
@@ -227,6 +255,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def show_pluginlist(self):
+        '''
+        Method to show summarized list of plugin(s).
+        
+        Operand = []
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
          names = self.session['plugins']['loaded']
          print('')
          print('Loaded Plugins (n = %s): ' % str(len(names)))
@@ -244,6 +280,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
          return None
         
     def show_plugindata(self, operand):
+        '''
+        Method to show detailed information about a plugin.
+        
+        Operand = [<plugin name>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         if len(operand) == 2:
             pname = operand[1]
             parameters = self.session['plugin_' + pname]['parameters']
@@ -268,6 +312,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
             return None
         
     def show_session(self):
+        '''
+        Method to show all session attributes.
+        
+        Operand = []
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         print('')
         print('Session Attributes:')
         pprint(self.session)
@@ -275,6 +327,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def show_dataframe(self):
+        '''
+        Method to show data frame(s).
+        
+        Operand = []
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         dataframes = self.session['MDF'].frames
         print('')
         print('Current Dataframe(s) (n = %s):' % str(len(dataframes)))
@@ -292,6 +352,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def show_parameter(self):
+        '''
+        Method to show all plugin parameter(s) set(s).
+        
+        Operand = []
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         pname = self.session['parameters'].keys()
         print('')
         print('Current Parameter(s) (n = %s):' % str(len(pname)))
@@ -309,6 +377,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_show(self, operand):
+        '''
+        Method to show attributes or settings.
+        
+        Operand = [<object to show>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         op = operand[0].lower()
         if op == 'asthistory': return self.show_asthistory()
         if op == 'history': return self.show_history()
@@ -321,6 +397,16 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_loadcsv(self, operand, version):
+        '''
+        Method to load CSV file and attach the data frame.
+        
+        Operand = [<CSV file name>, <data frame name>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        @param version: loading version. Version == 1, CSV with headers. 
+        Version == 2, CSV without headers.
+        '''
         filename = operand[0]
         filepath = os.sep.join([self.environment['cwd'], filename])
         df_name = operand[1]
@@ -337,6 +423,24 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_pythonshell(self, operand):
+        '''
+        Method to launch a Python shell.
+        
+        Operand = []
+        
+        The following are executed:
+        C{import code
+        from pprint import pprint
+        from tapps import *
+        import engine as tapps_engine
+        session = self.session
+        environment = self.environment
+        dataframes = self.session['MDF'].frames
+        code.interact(local=vars())}
+                
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         exec('''import code; \
                 from pprint import pprint; \
                 from tapps import *; \
@@ -352,6 +456,16 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_newdataframe(self, operand):
+        '''
+        Method to attach a data frame (input data frame or results data frame) 
+        from plugin parameter(s) set.
+        
+        Operand = [<name of attached data frame>, <parameter set name>, 
+        <parameter: 'dataframe' or 'results'>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         new_df_name = operand[0]
         paramD_name = operand[1]
         df_in_paramD = operand[2]
@@ -372,6 +486,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_newparam(self, operand):
+        '''
+        Method to create a new plugin parameter(s) set.
+        
+        Operand = [<plugin name>, <name for plugin parameter(s) set>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         plugin_name = operand[0]
         parameter_name = operand[1]
         parameters = e.NewPluginParameters(self.session, plugin_name)
@@ -379,6 +501,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_runplugin(self, operand):
+        '''
+        Method to execute a plugin using a plugin parameter(s) set.
+        
+        Operand = [<name of plugin parameter(s) set>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         paramD_name = operand[0]
         if paramD_name in self.session['parameters']:
             e.RunPlugin(self.session, paramD_name)
@@ -389,6 +519,19 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_greedysearch(operand):
+        '''
+        Method to select data from a data frame into another data frame, where 
+        a data element in any series, identified by the same data label, holds 
+        true for the selection criterion.
+        
+        This method uses dataframe.Dataframe.extractValue() method.
+        
+        Operand = [<data frame name>, <new data frame name>, <binary 
+        comparator>, <search value>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         df_name = operand[0]
         ndf_name = operand[1]
         binop = operand[2]
@@ -408,6 +551,19 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_idsearch(self, operand):
+        '''
+        Method to select data from a data frame into another data frame, where 
+        a data element in a specific series, holds true for the selection 
+        criterion.
+        
+        This method uses dataframe.Dataframe.extractSeriesValue() method.
+        
+        Operand = [<data frame name>, <new data frame name>, <series name>, 
+        <binary comparator>, <search value>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         df_name = operand[0]
         ndf_name = operand[1]
         series_name = operand[2]
@@ -428,6 +584,15 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_cast(self, operand):
+        '''
+        Method to type cast one or more series in a data frame.
+        
+        Operand = [<data type to cast into>, <data frame name>, 
+        [<series names>]]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         if operand[0] == 'alpha': datatype = 'string'
         if operand[0] == 'nonalpha': datatype = 'float'
         if operand[0] == 'float': datatype = 'float'
@@ -456,6 +621,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_duplicateframe(self, operand):
+        '''
+        Method to replicate/duplicate a data frame using deepcopy.
+        
+        Operand = [<name of data frame to duplicate>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         df_name = operand[0]
         ndf_name = operand[1]
         if df_name in self.session['MDF'].frames:
@@ -472,6 +645,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_deldataframe(self, operand):
+        '''
+        Method to delete/remove a data frame.
+        
+        Operand = [<name of data frame to delete>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         if operand[0] in self.session['MDF'].frames:
             del self.session['MDF'].frames[operand[0]]
         else:
@@ -482,6 +663,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_delparam(self, operand):
+        '''
+        Method to delete/remove a plugin parameter(s) set.
+        
+        Operand = [<plugin parameter(s) set to delete>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         if operand[0] in self.session['parameters']:
             param = self.session['parameters']
             del param[operand[0]]
@@ -493,6 +682,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_describe(self, operand):
+        '''
+        Method to describe a data frame.
+        
+        Operand = [<data frame name>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         if operand[0] not in self.session['MDF'].frames: 
             code = 'Error/010'
             message = 'Dataframe name, %s, is not found' % (operand[0])
@@ -537,6 +734,16 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_savesession(self, operand):
+        '''
+        Method to save/serialize the current session into a file.
+        
+        Operand = [<file name to be serialized into>]
+        
+        This method used pickle protocol version 0 to serialize.
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         filename = os.sep.join([self.environment['cwd'], operand[0]])
         f = open(filename, 'wb')
         data = [self.session,
@@ -548,6 +755,15 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_loadsession(self, operand):
+        '''
+        Method to load a previously saved/serialized session from external 
+        file.
+        
+        Operand = [<session serialized file>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         filename = os.sep.join([self.environment['cwd'], operand[0]])
         f = open(filename, 'rb')
         data = pickle.load(f)
@@ -559,6 +775,16 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_mergeseries(self, operand):
+        '''
+        Method to merge one or more series from the source data frame into 
+        destination data frame.
+        
+        Operand = [<data frame name>, [<series names>], <source data frame>, 
+        <destination data frame>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         series_names = operand[0]
         source_df = operand[1]
         destination_df = operand[2]
@@ -597,6 +823,17 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_mergelabels1(self, operand):
+        '''
+        Method to append data from source data frame into destination data 
+        frame, without replacement. Existing data within the destination data 
+        frame will not be replaced with data from source data frame.
+        
+        Operand = [<data frame name>, <source data frame>, <destination data 
+        frame>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         source_df = operand[0]
         destination_df = operand[1]
         if source_df not in self.session['MDF'].frames:
@@ -627,6 +864,18 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def do_mergelabels2(self, operand):
+        '''
+        Method to append data from source data frame into destination data 
+        frame, with replacement. Existing data within the destination data 
+        frame will be replaced with data from source data frame, if the labels 
+        in the destination data frame is found in the source data frame.
+        
+        Operand = [<data frame name>, <source data frame>, <destination data 
+        frame>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         source_df = operand[0]
         destination_df = operand[1]
         if source_df not in self.session['MDF'].frames:
@@ -655,6 +904,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_renameseries(self, operand):
+        '''
+        Method to rename series name within a specific data frame.
+        
+        Operand = [<data frame name>, <original series name>, <new series name>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         old_name = operand[1]
         new_name = operand[2]
         if operand[0] not in self.session['MDF'].frames:
@@ -674,6 +931,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_renamelabels(self, operand):
+        '''
+        Method to rename label name within a specific data frame.
+        
+        Operand = [<data frame name>, <original label name>, <new label name>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         old_name = operand[1]
         new_name = operand[2]
         if operand[0] not in self.session['MDF'].frames:
