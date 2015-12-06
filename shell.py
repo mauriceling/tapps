@@ -36,8 +36,20 @@ import engine as e
 from tappsparser import TAPPSParser
 
 class Shell(object):
+    '''
+    Command-line shell and TAPPS virtual machine.
+    '''
     
     def __init__(self, session={}, language='TAPPS'):
+        '''
+        Constructor method.
+        
+        @param session: dictionary to hold all data within the current session. 
+        Please see module documentation for more details.
+        @param language: language to initialize the current shell and virtual 
+        machine. Allowable languages are 'TAPPS' (TAPPS DML language).
+        @type language: string
+        '''
         if language == 'TAPPS':
             self.parser = TAPPSParser()
         self.parser.build()
@@ -70,6 +82,9 @@ class Shell(object):
         return (excName, excArgs, excTb)
         
     def header(self):
+        '''
+        Prints header, which is displayed at the start of the shell.
+        '''
         print('''
 TAPPS: Technical (Analysis) and Applied Statistics, Version 0.1
 Current time is %s
@@ -79,12 +94,18 @@ To exit this application, type "quit".
 ''' % (str(datetime.utcnow())))
         
     def do_copyright(self):
+        '''
+        Prints copyright statement.
+        '''
         print('')
         print('Copyright (C) 2015, Maurice HT Ling (on behalf of TAPPS Team)')
         print('')
         return None
     
     def do_credits(self):
+        '''
+        Prints list of credits for TAPPS development.
+        '''
         print('')
         print('''TAPPS Project Team
 Project architect: Maurice HT Ling (mauriceling@acm.org)''')
@@ -92,6 +113,9 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def do_license(self):
+        '''
+        Prints license statement.
+        '''
         print('')
         license = open('LICENSE', 'r').readlines()
         license = [x[:-1] for x in license]
@@ -100,6 +124,13 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def intercept_processor(self, statement):
+        '''
+        Method to intercept non-bytecode statements and channel to the 
+        appropriate handlers.
+        
+        @param statement: command-line statement
+        @type statement: string
+        '''
         if statement == 'copyright': return self.do_copyright()
         if statement == 'credits': return self.do_credits()
         if statement == 'exit': return 'exit'
@@ -107,6 +138,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if statement == 'quit': return 'exit'
         
     def error_message(self, code, msg):
+        '''
+        Generic error code/message printer to display error/warning messages.
+        
+        @param code: error/warning code to display
+        @type code: string
+        @param msg: error/warning message to display
+        @type msg: string
+        '''
         print('%s: %s' % (str(code), str(msg)))
         
     def do_set(self, operand):
@@ -155,6 +194,11 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
     
     def show_environment(self):
+        '''
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         environment = self.environment.keys()
         environment.sort()
         print('')
@@ -652,6 +696,15 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return None
         
     def command_processor(self, operator, operand):
+        '''
+        Method to channel bytecodes operand(s), if any, into the respective 
+        bytecode processors.
+        
+        @param operator: bytecode operator
+        @type operator: string
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
         if operator == 'cast': self.do_cast(operand)
         if operator == 'deldataframe': self.do_deldataframe(operand)
         if operator == 'delparam': self.do_delparam(operand)
@@ -676,6 +729,20 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if operator == 'show': self.do_show(operand)
     
     def interpret(self, statement):
+        '''
+        Method to process an input statement by either sending it to Shell.
+        intercept_processor(), for non-bytecodes statements, or Shell.
+        command_processor(), for bytecodes statements after lexing and parsing 
+        the input statement into bytecodes.
+        
+        Bytecodes are returned by the corresponding language's lexer and parser 
+        in the form of a tuple, (<bytecode operator>, <bytecode operands>+), 
+        which is then split into operator (the byte operator) and a list of 
+        operands (the bytecode operands), if any.
+        
+        @param statement: command-line statement
+        @type statement: string
+        '''
         try:
             self.history[str(self.count)] = statement
             if statement.lower() in ['copyright', 'copyright;',
@@ -705,6 +772,13 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
                         print(l)
         
     def cmdloop(self):
+        '''
+        Command-line loop executor. This runs the shell like a command-line 
+        interpreter and calls Shell.interpret() method to process the statement/
+        command from the command-line.
+        
+        @return: session dictionary
+        '''
         self.header()
         while True:
             statement = raw_input('TAPPS: %s> ' % str(self.count)).strip() 
@@ -713,6 +787,14 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         return self.session
         
     def cmdscript(self, script):
+        '''
+        Script executor. This method is used to execute a script file that is 
+        passed into TAPPS and calls Shell.interpret() method to process the 
+        ordered list of commands in script.
+        
+        @param script: ordered list of commands in script to execute.
+        @return: session dictionary
+        '''
         for statement in script:
             statement = statement.strip()
             print('Command #%s: %s' % (str(self.count), statement))
