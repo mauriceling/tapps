@@ -181,7 +181,7 @@ def LoadCSV(session, filepath, series_header=True, separator=',',
     added data series (this will require filling in of missing values 
     to the newly added data series). Default = None.
     @param newline: character to denote new line or line feed in the 
-    CSV file. Default = '\n'
+    CSV file.
     '''
     session = e.LoadCSV(session, filepath, series_header, separator, 
                         fill_in, newline)
