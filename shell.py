@@ -263,21 +263,21 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         @param operand: bytecode operand(s), if any
         @type operand: list
         '''
-         names = self.session['plugins']['loaded']
-         print('')
-         print('Loaded Plugins (n = %s): ' % str(len(names)))
-         for n in names: 
-             print('  %s ; Release = %s' % 
-                    (str(n), 
-                     self.session['plugin_' + n]['release']))
-         print('')
-         for c in e.plugin_categories:
-             numplugin = len(self.session['plugins'][c])
-             print('Plugin Category: %s (n = %s)' % (str(c), str(numplugin)))
-             listing = ' ; '.join(self.session['plugins'][c])
-             print('    %s' % listing)
-             print('')
-         return None
+        names = self.session['plugins']['loaded']
+        print('')
+        print('Loaded Plugins (n = %s): ' % str(len(names)))
+        for n in names: 
+            print('  %s ; Release = %s' % 
+                (str(n), 
+                 self.session['plugin_' + n]['release']))
+        print('')
+        for c in e.plugin_categories:
+            numplugin = len(self.session['plugins'][c])
+            print('Plugin Category: %s (n = %s)' % (str(c), str(numplugin)))
+            listing = ' ; '.join(self.session['plugins'][c])
+            print('    %s' % listing)
+            print('')
+        return None
         
     def show_plugindata(self, operand):
         '''
