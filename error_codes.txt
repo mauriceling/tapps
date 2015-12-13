@@ -24,4 +24,4 @@ Error/022;renameseries;Dataframe name, <name>, is not found;
 Error/023;renamelabels;Dataframe name, <name>, is not found;
 Error/024;renameseries;Series name, <name>, is not found;
 Error/025;renamelabels;Label name, <name>, is not found;
-
+Error/026;savecsv;Dataframe name, <name>, is not found;

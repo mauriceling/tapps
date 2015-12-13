@@ -277,12 +277,15 @@ class TAPPSParser(object):
     def p_save_statement(self, p):
         '''
         save_statement : SAVE SESSION AS FILENAME
+                       | SAVE DATAFRAME ID AS CSV FILENAME
         '''
         if p[2].lower() == 'session':
             p[0] = ('savesession', p[4])
+        if p[2].lower() == 'dataframe' and p[5].lower() == 'csv':
+            p[0] = ('savecsv', p[3], p[6])
         
-    #def p_error(self, p):
-    #    print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
+    def p_error(self, p):
+        print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
     
     def build(self, **kwargs):
         self.parser = yacc.yacc(module=self, **kwargs)

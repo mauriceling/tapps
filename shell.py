@@ -959,6 +959,35 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         df.data[new_name] = data
         del df.data[old_name]
         return None
+    
+    def do_savecsv(self, operand):
+        '''
+        Method to save a data frame into a CSV file.
+        
+        Operand = [<data frame name>, <CSV file name>]
+        
+        @param operand: bytecode operand(s), if any
+        @type operand: list
+        '''
+        if operand[0] not in self.session['MDF'].frames:
+            code = 'Error/026'
+            message = 'Dataframe name, %s, is not found' % (operand[0])
+            self.error_message(code, message)
+            return None
+        else:
+            df = self.session['MDF'].frames[operand[0]]
+        filename = operand[1]
+        filepath = os.sep.join([self.environment['cwd'], filename])
+        csvfile = open(filepath, 'w')
+        sep = self.environment['separator']
+        header = sep.join([''] + [str(x) for x in df.series_names])
+        csvfile.write(header + '\n')
+        for label in df.data.keys():
+            row = [str(label)] + [str(item) for item in df.data[label]]
+            row = sep.join(row)
+            csvfile.write(row + '\n')
+        csvfile.close()
+        return None
         
     def command_processor(self, operator, operand):
         '''
@@ -989,6 +1018,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         if operator == 'renameseries': self.do_renameseries(operand)
         if operator == 'renamelabels': self.do_renamelabels(operand)
         if operator == 'runplugin': self.do_runplugin(operand)
+        if operator == 'savecsv': self.do_savecsv(operand)
         if operator == 'savesession': self.do_savesession(operand)
         if operator == 'set': self.do_set(operand)
         if operator == 'show': self.do_show(operand)
