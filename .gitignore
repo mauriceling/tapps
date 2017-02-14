@@ -58,3 +58,4 @@ target/
 *.py~
 parser.out
 parsetab.py
+*.dropbox.attr
