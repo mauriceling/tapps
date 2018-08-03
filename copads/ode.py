@@ -5,6 +5,8 @@ Copyright (c) Maurice H.T. Ling <mauriceling@acm.org>
 
 Date created: 20th December 2014
 '''
+import re
+
 def boundary_checker(y, boundary, type):
     '''
     Private function - called by ODE solvers to perform boundary checking 
@@ -33,13 +35,27 @@ def boundary_checker(y, boundary, type):
         if y[int(k)] > boundary[k][0] and type == 'upper':
             y[int(k)] = boundary[k][1]
     return y
-        
-def Euler(funcs, x0, y0, step, xmax,
+
+def Euler(funcs, x0, y0, step, xmax, nonODEfunc=None,
           lower_bound=None, upper_bound=None,
           overflow=1e100, zerodivision=1e100):
     '''
-    Generator to integrate a system of ODEs, y0' = funcs(x0, y0), using Euler 
-    method.
+    Generator to integrate a system of ODEs, y0' = funcs(x0, y0), using 
+    Euler method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -61,6 +77,8 @@ def Euler(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
@@ -86,6 +104,8 @@ def Euler(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -94,12 +114,26 @@ def Euler(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
 
-def Heun(funcs, x0, y0, step, xmax,
+def Heun(funcs, x0, y0, step, xmax, nonODEfunc=None,
          lower_bound=None, upper_bound=None,
          overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y0' = funcs(x0, y0), using Heun's 
     method, which is also known as Runge-Kutta 2nd method or Trapezoidal method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -107,10 +141,10 @@ def Heun(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -121,10 +155,15 @@ def Heun(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -154,6 +193,8 @@ def Heun(funcs, x0, y0, step, xmax,
         return y2
     while x0 < xmax:
         y2 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y2 = boundary_checker(y2, lower_bound, 'lower')
         if upper_bound: 
@@ -162,12 +203,26 @@ def Heun(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
     
-def RK3(funcs, x0, y0, step, xmax,
+def RK3(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y0' = funcs(x0, y0), using third
     order Runge-Kutta method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -175,10 +230,10 @@ def RK3(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -189,10 +244,15 @@ def RK3(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -232,6 +292,8 @@ def RK3(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -240,12 +302,26 @@ def RK3(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
         
-def RK4(funcs, x0, y0, step, xmax, 
+def RK4(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y' = f(x, y), using fourth
     order Runge-Kutta method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -253,10 +329,10 @@ def RK4(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -267,10 +343,15 @@ def RK4(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -317,6 +398,8 @@ def RK4(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -325,12 +408,26 @@ def RK4(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
         
-def RK38(funcs, x0, y0, step, xmax, 
+def RK38(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y' = f(x, y), using fourth
     order Runge-Kutta method, 3/8 rule.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -338,10 +435,10 @@ def RK38(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -352,10 +449,15 @@ def RK38(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -402,6 +504,8 @@ def RK38(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -410,12 +514,26 @@ def RK38(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
 
-def CK4(funcs, x0, y0, step, xmax, 
+def CK4(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y' = f(x, y), using fifth 
     order Cash-Karp method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -423,10 +541,10 @@ def CK4(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -437,10 +555,15 @@ def CK4(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -507,6 +630,8 @@ def CK4(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -515,12 +640,26 @@ def CK4(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
         
-def CK5(funcs, x0, y0, step, xmax, 
+def CK5(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y' = f(x, y), using fifth 
     order Cash-Karp method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -528,10 +667,10 @@ def CK5(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -542,10 +681,15 @@ def CK5(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -611,6 +755,8 @@ def CK5(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -619,12 +765,26 @@ def CK5(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
         
-def RKF4(funcs, x0, y0, step, xmax, 
+def RKF4(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y' = f(x, y), using fourth 
     order Runge-Kutta_Fehlberg method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -632,10 +792,10 @@ def RKF4(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -646,10 +806,15 @@ def RKF4(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -716,6 +881,8 @@ def RKF4(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -724,12 +891,26 @@ def RKF4(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
       
-def RKF5(funcs, x0, y0, step, xmax, 
+def RKF5(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y' = f(x, y), using fifth 
     order Runge-Kutta_Fehlberg method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -737,10 +918,10 @@ def RKF5(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -751,10 +932,15 @@ def RKF5(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -823,6 +1009,8 @@ def RKF5(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -831,12 +1019,26 @@ def RKF5(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
         
-def DP4(funcs, x0, y0, step, xmax, 
+def DP4(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y' = f(x, y), using fourth 
     order Dormand-Prince method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -844,10 +1046,10 @@ def DP4(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -858,10 +1060,15 @@ def DP4(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -940,6 +1147,8 @@ def DP4(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -948,12 +1157,26 @@ def DP4(funcs, x0, y0, step, xmax,
         x0 = x0 + step
         yield [x0] + y0
         
-def DP5(funcs, x0, y0, step, xmax, 
+def DP5(funcs, x0, y0, step, xmax, nonODEfunc=None,
         lower_bound=None, upper_bound=None,
         overflow=1e100, zerodivision=1e100):
     '''
     Generator to integrate a system of ODEs, y' = f(x, y), using fifth 
     order Dormand-Prince method.
+    
+    A function (as nonODEfunc parameter) can be included to modify one or 
+    more variables (y0 list). This function will not be an ODE (not a 
+    dy/dt). This can be used to consolidate the modification of one or 
+    more variables at each ODE solving step. For example, y[0] = y[1] / y[2] 
+    can be written as 
+    
+    >>> def modifying_function(y, step):
+            y[0] = y[1] / y[2]
+            return y
+    
+    This function must take 'y' (variable list) and 'step' (time step) as 
+    parameters and must return 'y' (the modified variable list). This 
+    function will execute before boundary checking at each time step.
     
     Upper and lower boundaries of one or more variable can be set using 
     upper_bound and lower_bound parameters respectively. These parameters 
@@ -961,10 +1184,10 @@ def DP5(funcs, x0, y0, step, xmax,
     of [<boundary value>, <value to set if boundary is exceeded>]. For 
     example, the following dictionary for lower boundary {'1': [0.0, 0.0], 
     '5': [2.0, 2.0]} will set the lower boundary of variable y[0] and y[5] 
-    to 0.0 and 2.0 respectively. This also allows for setting to a 
-    different value - for example, {'1': [0.0, 1.0]} will set variable 
-    y[0] to 2.0 if the original y[0] value is negative.
-
+    to 0.0 and 2.0 respectively. This also allows for setting to a different 
+    value - for example, {'1': [0.0, 1.0]} will set variable y[0] to 2.0 if 
+    the original y[0] value is negative.
+    
     @param funcs: system of differential equations
     @type funcs: list
     @param x0: initial value of x-axis, which is usually starting time
@@ -975,10 +1198,15 @@ def DP5(funcs, x0, y0, step, xmax,
     @type step: float
     @param xmax: maximum value of x-axis, which is usually ending time
     @type xmax: float
+    @param nonODEfunc: a function to modify the variable list (y0)
+    @type nonODEfunc: function
     @param lower_bound: set of values for lower boundary of variables
     @type lower_bound: dictionary
     @param upper_bound: set of values for upper boundary of variables
     @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
     @type overflow: float
     @param zerodivision: value (usually a large value) to assign in event 
     of zero division error, which results in positive infinity, during 
@@ -1057,6 +1285,8 @@ def DP5(funcs, x0, y0, step, xmax,
         return y1
     while x0 < xmax:
         y1 = solver(funcs, x0, y0, step)
+        if nonODEfunc:
+            y1 = nonODEfunc(y1, step)
         if lower_bound: 
             y1 = boundary_checker(y1, lower_bound, 'lower')
         if upper_bound: 
@@ -1064,3 +1294,255 @@ def DP5(funcs, x0, y0, step, xmax,
         y0 = y1
         x0 = x0 + step
         yield [x0] + y0
+
+def _equation_constructor(expressions={},
+                          parameters={},
+                          variables=[]):
+    '''
+    Private function to support ODE_constructor to generate ODE function 
+    for each ODE.
+    
+    @param expressions: dictionary of expressions for ODE(s). Please see 
+    above documentation. 
+    @param parameters: dictionary of parameter values to be substituted 
+    into the ODE equations
+    @param variables: list of additional variables to be tagged for 
+    substitution(s)
+    @return: tuple of (<list of generated ODE functions>, <list of tagged 
+    variables>) 
+    '''
+    statements = []
+    # Generate ODE function, one at a time
+    for name in expressions.keys():
+        # Generate ODE function definition
+        stmt = '\ndef %s(t, y):' % str(name)
+        expression = expressions[name]
+        if type(expression) == type(''): expression = [expression]
+        count = 1
+        # Generate list of expression(s) for current ODE function
+        exp_list = []
+        variables = list(set(variables + expressions.keys()))
+        for exp in expression:
+            # Substitute parameter/variable values 
+            for k in parameters.keys():
+                exp = exp.replace(str(k), str(parameters[k]))
+            #variables = list(set(variables + expressions.keys()))
+            
+            for v in variables:
+                exp = exp.replace(str(v), 'v@'+str(v))
+            # Generate expression codes
+            stmt = stmt + '\n    exp_%s = %s' % (str(count), str(exp))
+            exp_list.append('exp_%s' % str(count))
+            count = count + 1
+        # Compile generated expressions into return value
+        return_stmt = '\n    return ' + ' + '.join(exp_list)
+        stmt = stmt + return_stmt
+        statements.append(stmt)
+    return (statements, variables)
+
+def _modifying_constructor(modifying_expressions):
+    '''
+    Private function to support ODE_constructor to generate function code 
+    for modifying expressions.
+    
+    @param modifying_expressions: list of expressions to modify the 
+    variables
+    @return: generated function code
+    '''
+    stmt = '\ndef modifying_expression(y, step):'
+    for exp in modifying_expressions:
+        stmt = stmt + '\n    %s' % str(exp)
+    stmt = stmt + '\n    return y'
+    return stmt
+
+def ODE_constructor(scriptfile,
+                    resultsfile,
+                    time=(0.0, 0.1, 100.0),
+                    ODE_solver='RK4',
+                    expressions={},
+                    parameters={},
+                    initial_conditions={},
+                    modifying_expressions=[],
+                    lower_bound=None, 
+                    upper_bound=None,
+                    overflow=1e100, 
+                    zerodivision=1e100):
+    '''
+    Function to construct an ODE simulation script file from given 
+    definitions.
+    
+    For example, the following system of ODEs::
+    
+        d(human)/dt = birth - zombied - death
+        d(zombie)/dt = zombied + resurrected - destroyed
+        d(dead)/dt = death + destroyed - resurrected
+        
+        birth = 0
+        zombied = 0.0095 * human * zombie
+        death = 0.0001 * human
+        resurrected = 0.0002 * dead
+        destroyed = 0.0003 * human * zombie
+         
+        where initially (t0), 
+         
+        number of humans = 500
+        number of zombies = 0
+        number of dead = 0
+         
+        and with the following boundaries
+         
+        number of humans > 0
+        number of zombies < 10000
+        number of dead < 10000
+         
+        and there is an influx of 5 humans per day into the infected village
+    
+    can be specified as 
+    
+    >>> scriptfile = 'zombie_attack.py'
+        resultsfile = 'zombie_data.csv'
+        time = (0.0, 0.1, 100.0)
+        ODE_solver = 'RK4'
+        expressions = {'human': ['birth_rate',
+                                 '- (transmission_rate * human * zombie)',
+                                 '- (death_rate * human)'],
+                       'zombie': ['(transmission_rate * human * zombie)',
+                                  '(resurrection_rate * dead)',
+                                  '- (destroy_rate * human * zombie)'],
+                       'dead': ['(death_rate * human)',
+                                '(destroy_rate * human * zombie)',
+                                '- (resurrection_rate * dead)']}
+        parameters = {'birth_rate': 0.0,           # birth rate
+                      'transmission_rate': 0.0095, # transmission percent   
+                      'death_rate': 0.0001,        # natural death percent  
+                      'resurrection_rate': 0.0002, # resurect percent  
+                      'destroy_rate':0.0003        # destroy percent   
+                      }
+        initial_conditions = {'human': 500.0,
+                              'zombie': 0.0, 
+                              'dead': 0.0}
+        modifying_expression = ['human = human + (5 * step)']
+        lower_bound = {'human': [0.0, 0.0]}
+        upper_bound = {'zombie': [10000.0, 10000.0],
+                       'dead': [10000.0, 10000.0]}
+        overflow = 1e100
+        zerodivision = 1e100
+    
+    @param scriptfile: name of Python file for the generated ODE script 
+    file
+    @type scriptfile: string
+    @param resultsfile: name of ODE simulation results file (CSV file), 
+    which will be included into the generated simulation script file
+    @type resultsfile: string    
+    @param time: tuple of time parameters for simulation in the format of 
+    (<start time>, <time step>, <end time>). Default = (0.0, 0.1, 100.0)
+    @param ODE_solver: name of ODE solver to use. Default = RK4
+    @param expressions: dictionary of expressions for ODE(s). Please see 
+    above documentation. 
+    @param parameters: dictionary of parameter values to be substituted 
+    into the ODE equations
+    @param modifying_expressions: list of expressions to modify the 
+    variables
+    @param initial_conditions: dictionary of initial conditions for each 
+    ODE
+    @param lower_bound: set of values for lower boundary of variables
+    @type lower_bound: dictionary
+    @param upper_bound: set of values for upper boundary of variables
+    @type upper_bound: dictionary
+    @param overflow: value (usually a large value) to assign in event of 
+    over flow error (usually caused by a large number) during integration. 
+    Default = 1e100.
+    @type overflow: float
+    @param zerodivision: value (usually a large value) to assign in event 
+    of zero division error, which results in positive infinity, during 
+    integration. Default = 1e100.
+    @type zerodivision: float
+    @return: generated ODE codes for the entire script
+    @rtype: list
+    '''
+    statements = [] 
+    initial_conditions_list = initial_conditions.keys()
+    # Construct ODE functions
+    (ODE_functions,
+     variables) = _equation_constructor(expressions,
+                                        parameters,
+                                        initial_conditions_list)
+    # Construct modifying expression
+    mexpression = _modifying_constructor(modifying_expressions)
+    # Generate ODE functions/equations table
+    table = {}
+    count = 0
+    for v in initial_conditions_list:
+        table[str(v)] = str(count)
+        count = count + 1
+    # Generate lower boundary table
+    if lower_bound != None:
+        lbound = {}
+        for k in lower_bound.keys():
+            lbound[table[k]] = lower_bound[k]
+    else:
+        lbound = None
+    # Generate upper boundary table
+    if upper_bound != None:
+        ubound = {}
+        for k in upper_bound.keys():
+            ubound[table[k]] = upper_bound[k]
+    else:
+        ubound = None
+    # Write ode module import
+    statements.append('import ode\n\n')  
+    # Generate variable array and statements
+    statements.append('y = range(%s)\n' % str(len(variables)))
+    count = 0
+    for k in initial_conditions_list:
+        statements.append('y[%s] = %s\n' % \
+                          (str(count), str(initial_conditions[k])))
+        count = count + 1
+    statements.append('\n')
+    # Perform variable replacements in ODE functions, and write functions
+    for funct in ODE_functions:
+        for v in table.keys():
+            funct = funct.replace('v@'+v, 'y[%s]' % table[v])
+        statements.append(funct)
+    statements.append('\n\n')
+    # Perform variable replacements in modifying expression, and write out
+    for v in table.keys():
+        mexpression = mexpression.replace(v, 'y[%s]' % table[v])
+    statements.append(mexpression)
+    statements.append('\n\n')
+    # Generate ODE assignment array and statements
+    statements.append('ODE = range(%s)\n' % str(len(variables)))
+    count = 0
+    for k in initial_conditions_list:
+        statements.append('ODE[%s] = %s\n' % (str(count), str(k)))
+        count = count + 1
+    statements.append('\n')
+    # Generate ODE execution codes
+    statements.append('stime = %s \n' % str(time[0]))
+    statements.append('step = %s \n' % str(time[1]))
+    statements.append('etime = %s \n' % str(time[2]))
+    statements.append('lower_bound = %s \n' % str(lbound))
+    statements.append('upper_bound = %s \n' % str(ubound))
+    statements.append('overflow = %s \n' % str(overflow))
+    statements.append('zerodivision = %s \n' % str(zerodivision))
+    statements.append('\n')
+    statements.append("f = open('%s', 'w')\n" % str(resultsfile))
+    headers = ['time'] + [str(k)for k in initial_conditions.keys()]
+    headers = ','.join(headers)
+    statements.append("f.write('%s' + '\\n') \n" % headers)
+    statements.append('\n')
+    statements.append('for x in ode.%s(ODE, stime, y, step, etime, \n' % \
+                      str(ODE_solver))
+    statements.append('        modifying_expression, \n') 
+    statements.append('        lower_bound, upper_bound, \n') 
+    statements.append('        overflow, zerodivision): \n')
+                      
+    statements.append("    f.write(','.join([str(item) for item in x]) + '\\n')")
+    statements.append('\n')
+    statements.append('f.close()')
+    # Write generated codes into script file
+    sfile = open(scriptfile, 'w')
+    sfile.writelines(statements)
+    sfile.close()
+    return statements
+    
