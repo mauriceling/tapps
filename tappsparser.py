@@ -1,4 +1,4 @@
-'''
+'''!
 Parser for TAPPS commandline.
 
 Date created: 12th November 2015

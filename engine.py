@@ -1,4 +1,4 @@
-'''
+'''!
 Execution Engine for TAPPS.
 
 Date created: 12th November 2015
@@ -53,7 +53,7 @@ def SetPaths(session):
     return sys.path
 
 def LoadPlugin(session, plugin):
-    '''
+    '''!
     Function to perform basic checks and load a plugin into session 
     dictionary to get it ready for use.
     
@@ -84,12 +84,11 @@ def LoadPlugin(session, plugin):
         will be loaded into session['plugins']['loadFail'][<plugin 
         name>]
         
-    @param session: dictionary to hold all data within the current session. 
-    Please see module documentation for more details.
-    @param plugin: module name of plugin to load (corresponding to the 
-    folder/dictionary which the plugin resides - <current working 
-    directory>/plugin/<plugin folder name>)
-    @type plugin: string
+    @param session: dictionary to hold all data within the current 
+    session. Please see module documentation for more details.
+    @param plugin String: module name of plugin to load (corresponding 
+    to the folder/dictionary which the plugin resides - <current 
+    working directory>/plugin/<plugin folder name>)
     @return: session dictionary
     '''
     checks = ['MainFunctionError',
@@ -190,10 +189,11 @@ def LoadPlugin(session, plugin):
     return session
     
 def GetPlugins(session, pluginpath='plugins'):
-    '''
+    '''!
     Function to discover available plugins and load each of the 
     plugins (using engine.LoadPlugin function to each plugin) into 
-    session dictionary and get the plugins ready for use. Each plugin is a Python script file (with or without its own folder) in the 
+    session dictionary and get the plugins ready for use. Each plugin 
+    is a Python script file (with or without its own folder) in the 
     plugin directory/folder; hence, the plugins discovery process is 
     to list down the directory/folder names within the plugin directory
     /folder.
@@ -216,8 +216,8 @@ def GetPlugins(session, pluginpath='plugins'):
         
     @param session: dictionary to hold all data within the current 
     session. Please see module documentation for more details.
-    @param path: path to plugin directory/folder. Default = plugins
-    @type path: string
+    @param path String: path to plugin directory/folder. Default = 
+    plugins
     @return: session dictionary
     '''
     pluginpath = str(pluginpath)
@@ -244,32 +244,32 @@ def GetPlugins(session, pluginpath='plugins'):
     return session
 
 def RunPlugin(session, parameter_name):
-    '''
-    Function to run/execute a plugin using the parameters (sub-dictionary 
-    within session, under 'parameters' key) needed for the plugin and 
-    returning the execution results into session dictionary.
+    '''!
+    Function to run/execute a plugin using the parameters (
+    sub-dictionary within session, under 'parameters' key) needed for 
+    the plugin and returning the execution results into session 
+    dictionary.
     
     The parameters sub-dictionary will need to contain values for the 
     following keys:
-        - analysis_name: user-given name for the analytical execution of 
-        plugin
+        - analysis_name: user-given name for the analytical execution 
+        of  plugin
         - plugin_name: name of plugin to execute
         - dataframe: a dataframe object to act as data for use by the 
-        plugin
-    and any other plugin-specific parameters/options.
+        plugin and any other plugin-specific parameters/options.
     
     After execution, analysis results will be returned as value to 
     'results' key in the parameters sub-dictionary.
     
-    Hence, session['parameters'][<parameter_name>] will hold the entire 
-    parameters sub-dictionary for the current plugin execution and 
-    session['parameters'][<parameter_name>]['results'] will hold the 
-    plugin output results.
+    Hence, session['parameters'][<parameter_name>] will hold the 
+    entire parameters sub-dictionary for the current plugin execution 
+    and session['parameters'][<parameter_name>]['results'] will hold 
+    the plugin output results.
     
-    @param session: dictionary to hold all data within the current session. 
-    Please see module documentation for more details.
-    @param parameter_name: name of parameter dictionary to hold all the 
-    parameters needed to execute the plugin. Please see module 
+    @param session: dictionary to hold all data within the current 
+    session. Please see module documentation for more details.
+    @param parameter_name: name of parameter dictionary to hold all 
+    the parameters needed to execute the plugin. Please see module 
     documentation for more details.
     @return: session dictionary
     '''
@@ -280,16 +280,15 @@ def RunPlugin(session, parameter_name):
     return session
     
 def LoadCSV(session, filepath, series_header, separator, fill_in, newline):
-    '''
+    '''!
     Function to load a comma-delimited (CSV) file as a data frame.
     
-    The data frame will have the filepath as name, and will be loaded into 
-    session dictionary under 'new_dataframe' key.
+    The data frame will have the filepath as name, and will be loaded 
+    into session dictionary under 'new_dataframe' key.
     
-    @param session: dictionary to hold all data within the current session. 
-    Please see module documentation for more details.
-    @param filepath: path to CSV file.
-    @type filepath: string
+    @param session: dictionary to hold all data within the current 
+    session. Please see module documentation for more details.
+    @param filepath String: path to CSV file.
     @param series_header: boolean flag to denote whether the first row 
     in the CSV file contains the data header. It is highly recommended 
     that header is included in the CSV file. 
@@ -299,10 +298,10 @@ def LoadCSV(session, filepath, series_header, separator, fill_in, newline):
     must be the same. Hence, filling in of missing values can occur 
     when (1) the newly added data series consists of new labels which 
     are not found in the current data frame (this will require filling 
-    in of missing values in the current data frame), or (2) the current 
-    data frame consists of labels that are not found in the newly 
-    added data series (this will require filling in of missing values 
-    to the newly added data series).
+    in of missing values in the current data frame), or (2) the 
+    current data frame consists of labels that are not found in the 
+    newly added data series (this will require filling in of missing 
+    values to the newly added data series).
     @param newline: character to denote new line or line feed in the 
     CSV file.
     '''
@@ -312,16 +311,15 @@ def LoadCSV(session, filepath, series_header, separator, fill_in, newline):
     return session
     
 def AttachNewDataFrame(session, dataframe_name):
-    '''
-    Function to move a new dataframe (in session['new_dataframe'], such 
-    as from LoadCSV function) to the main multi data frame object (in 
-    session['MDF']. 
+    '''!
+    Function to move a new dataframe (in session['new_dataframe'], 
+    such as from LoadCSV function) to the main multi data frame object 
+    (in session['MDF']. 
     
-    MDF will have a new dataframe while session['new_dataframe'] will be 
-    set to None.
+    MDF will have a new dataframe while session['new_dataframe'] will 
+    be set to None.
     
-    @param session: dictionary to hold all data within the current session. 
-    Please see module documentation for more details.
+    @param session: dictionary to hold all data within the current session. Please see module documentation for more details.
     @param dataframe_name: new name for the dataframe to attach
     '''
     session['new_dataframe'].name = dataframe_name
@@ -330,13 +328,12 @@ def AttachNewDataFrame(session, dataframe_name):
     return session
     
 def NewPluginParameters(session, plugin_name=''):
-    '''
+    '''!
     Function to duplicate parameters dictionary of a specific plugin.
     
-    @param session: dictionary to hold all data within the current session. 
-    Please see module documentation for more details.
-    @param plugin_name: name of plugin to get new parameters for.
-    @type plugin_name: string
+    @param session: dictionary to hold all data within the current session. Please see module documentation for more details.
+    @param plugin_name String: name of plugin to get new parameters 
+    for.
     @return: plugin parameters dictionary
     '''
     if plugin_name == '':
