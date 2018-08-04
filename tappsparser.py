@@ -285,14 +285,15 @@ class TAPPSParser(object):
             p[0] = ('savecsv', p[3], p[6])
         
     def p_error(self, p):
-        print "Syntax error in input" # TODO: at line %d, pos %d!" % (p.lineno)
+        print("Syntax error in input") # TODO: at line %d, pos %d!" % (p.lineno)
     
     def build(self, **kwargs):
         self.parser = yacc.yacc(module=self, **kwargs)
 
     def parse(self, statement, print_ast=False):
         result = self.parser.parse(statement, lexer=self.lexer)
-        if print_ast: print "parse result -> ", result
+        if print_ast: 
+            print ("parse result -> %s" % str(result))
         return result
         
     def test(self):

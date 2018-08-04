@@ -170,7 +170,7 @@ class TAPPSLexer(object):
                 tok = self.lexer.token()
                 if not tok: 
                     break
-                print tok
+                print(tok)
                 
 def unittest_lexer():
     l = TAPPSLexer()
