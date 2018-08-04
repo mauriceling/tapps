@@ -187,7 +187,8 @@ def AttachNewDataFrame(session, dataframe_name):
     
     @param session: dictionary to hold all data within the current session. Please see module documentation for more details.
     @param dataframe_name: new name for the dataframe to attach
-    '''    session = e.AttachNewDataFrame(session, dataframe_name)
+    '''
+    session = e.AttachNewDataFrame(session, dataframe_name)
     return session
     
 def NewPluginParameters(session, plugin_name=''):
