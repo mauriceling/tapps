@@ -1,0 +1,26 @@
+var namespacetapps_1_1copads_1_1copadsexceptions =
+[
+    [ "CopadsError", "classtapps_1_1copads_1_1copadsexceptions_1_1_copads_error.html", null ],
+    [ "DistanceError", "classtapps_1_1copads_1_1copadsexceptions_1_1_distance_error.html", null ],
+    [ "DistanceInputSizeError", "classtapps_1_1copads_1_1copadsexceptions_1_1_distance_input_size_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_distance_input_size_error" ],
+    [ "DistributionError", "classtapps_1_1copads_1_1copadsexceptions_1_1_distribution_error.html", null ],
+    [ "DistributionFunctionError", "classtapps_1_1copads_1_1copadsexceptions_1_1_distribution_function_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_distribution_function_error" ],
+    [ "DistributionParameterError", "classtapps_1_1copads_1_1copadsexceptions_1_1_distribution_parameter_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_distribution_parameter_error" ],
+    [ "EdgeNotFoundError", "classtapps_1_1copads_1_1copadsexceptions_1_1_edge_not_found_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_edge_not_found_error" ],
+    [ "FunctionParameterTypeError", "classtapps_1_1copads_1_1copadsexceptions_1_1_function_parameter_type_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_function_parameter_type_error" ],
+    [ "FunctionParameterValueError", "classtapps_1_1copads_1_1copadsexceptions_1_1_function_parameter_value_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_function_parameter_value_error" ],
+    [ "GraphEdgeSizeMismatchError", "classtapps_1_1copads_1_1copadsexceptions_1_1_graph_edge_size_mismatch_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_graph_edge_size_mismatch_error" ],
+    [ "GraphError", "classtapps_1_1copads_1_1copadsexceptions_1_1_graph_error.html", null ],
+    [ "GraphParameterError", "classtapps_1_1copads_1_1copadsexceptions_1_1_graph_parameter_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_graph_parameter_error" ],
+    [ "MatrixError", "classtapps_1_1copads_1_1copadsexceptions_1_1_matrix_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_matrix_error" ],
+    [ "MaxIterationsException", "classtapps_1_1copads_1_1copadsexceptions_1_1_max_iterations_exception.html", null ],
+    [ "NormalDistributionTypeError", "classtapps_1_1copads_1_1copadsexceptions_1_1_normal_distribution_type_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_normal_distribution_type_error" ],
+    [ "NotAdjacencyGraphMatrixError", "classtapps_1_1copads_1_1copadsexceptions_1_1_not_adjacency_graph_matrix_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_not_adjacency_graph_matrix_error" ],
+    [ "ParallelArrayError", "classtapps_1_1copads_1_1copadsexceptions_1_1_parallel_array_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_parallel_array_error" ],
+    [ "StatisticsError", "classtapps_1_1copads_1_1copadsexceptions_1_1_statistics_error.html", null ],
+    [ "TreeError", "classtapps_1_1copads_1_1copadsexceptions_1_1_tree_error.html", null ],
+    [ "TreeNodeTypeError", "classtapps_1_1copads_1_1copadsexceptions_1_1_tree_node_type_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_tree_node_type_error" ],
+    [ "UnknownGraphMatrixError", "classtapps_1_1copads_1_1copadsexceptions_1_1_unknown_graph_matrix_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_unknown_graph_matrix_error" ],
+    [ "VectorError", "classtapps_1_1copads_1_1copadsexceptions_1_1_vector_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_vector_error" ],
+    [ "VertexNotFoundError", "classtapps_1_1copads_1_1copadsexceptions_1_1_vertex_not_found_error.html", "classtapps_1_1copads_1_1copadsexceptions_1_1_vertex_not_found_error" ]
+];

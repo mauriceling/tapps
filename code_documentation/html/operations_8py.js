@@ -1,0 +1,26 @@
+var operations_8py =
+[
+    [ "Modulus2", "classtapps_1_1copads_1_1operations_1_1_modulus2.html", "classtapps_1_1copads_1_1operations_1_1_modulus2" ],
+    [ "Boolean", "classtapps_1_1copads_1_1operations_1_1_boolean.html", "classtapps_1_1copads_1_1operations_1_1_boolean" ],
+    [ "asdict", "operations_8py.html#a8b952407a2ed9104a8e2d6ad7c8eedf2", null ],
+    [ "combination", "operations_8py.html#a66f10020d21b6cd3e39f3e12650f9643", null ],
+    [ "contents", "operations_8py.html#a6342c1d84b0b54f07c1673b6e7da23a9", null ],
+    [ "count", "operations_8py.html#a0be81803a7fc820e4d6a5f2f7939d197", null ],
+    [ "factorial", "operations_8py.html#adfbcb9de89f73707ab51782da6531a33", null ],
+    [ "fcmp", "operations_8py.html#aca7b3d00c301e4a5b896a1789574b51c", null ],
+    [ "fibonacci", "operations_8py.html#a138104aa881ce12aebcb5d8bd9835c9f", null ],
+    [ "indexesof", "operations_8py.html#a5f49e4993252166c83942bd591c36041", null ],
+    [ "intd", "operations_8py.html#a6a608d05ef56850fda733e114b43c4eb", null ],
+    [ "itemindex", "operations_8py.html#a2910c580f82f8b4d3d98b55582b87d66", null ],
+    [ "items", "operations_8py.html#ae0cdacee222fb11c0bd0bbe980fb6105", null ],
+    [ "permutation", "operations_8py.html#a5d4773db21a9ccdd7e082d84f0427481", null ],
+    [ "product", "operations_8py.html#a635e3a835a98f98c362e98c60c907f14", null ],
+    [ "safe_exp", "operations_8py.html#a1b93fbcd025aa9d1b55bb9ca78fff360", null ],
+    [ "safe_log", "operations_8py.html#a0217e9eea20554bce32d9d1d4097b657", null ],
+    [ "safe_log2", "operations_8py.html#ae2411fe51a3b1ff40a1d6fc470ce8d85", null ],
+    [ "sample", "operations_8py.html#a89d017580b87dee82659f64e651ea636", null ],
+    [ "sample_wr", "operations_8py.html#a383c165015dc74eba74259ec19b88a44", null ],
+    [ "take", "operations_8py.html#aaef33a762ff23e6b8444cb483e3b307b", null ],
+    [ "take_byfn", "operations_8py.html#af622b56dddfcd9cc392465739fe34257", null ],
+    [ "LOG2", "operations_8py.html#a3803137f7d385f2c8f93148529ae7da1", null ]
+];
