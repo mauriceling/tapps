@@ -36,16 +36,13 @@ release = 1
 category = 'statistics'
 
 # A short description of the plugin / app (not mandatory)
-shortDescription = '''Generates summary statistics of a dataframe, by 
-series or by labels'''
+shortDescription = '''Generates summary statistics of a dataframe, by series or by labels'''
 
 # Long description of the plugin / app (not mandatory)
-longDescription = '''List of summary statistics generated: (1) arithmetic 
-mean, (2) count, (3) maximum value, (4) median, (5) minimum value, 
-(6) standard deviation, (7) summation'''
+longDescription = '''List of summary statistics generated: (1) arithmetic mean, (2) count, (3) maximum value, (4) median, (5) minimum value, (6) standard deviation, (7) summation'''
 
 # URL of this project, if any (not mandatory)
-projectURL = 'https://github.com/mauriceling/tapps/tree/master/plugins/summarize_1'
+projectURL = 'https://github.com/mauriceling/tapps/tree/master/plugins/summarize_1.py'
 
 # Person(s) to contact for any help or information regarding this plugin / app
 # (not mandatory)
@@ -56,18 +53,11 @@ contactDetails = 'Maurice Ling <mauriceling@acm.org>'
 # for all uses, both academic and industry. 
 license = '''General Public Licence version 3
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>
+You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 '''
 
 instructions = '''
@@ -77,8 +67,7 @@ Standard instructions:
     p['narrative'] = <user given description of analysis, if any>
     p['dataframe'] = <input dataframe object from session['MDF'].frames>
 Instructions specific to this plugin:
-    1. p['analytical_method'] takes in either 'by_series' (summarize by 
-    series) or 'by_labels' (summarize by labels).
+    1. p['analytical_method'] takes in either 'by_series' (summarize by series) or 'by_labels' (summarize by labels).
 '''
 
 parameters = \
