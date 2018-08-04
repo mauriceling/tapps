@@ -302,7 +302,8 @@ if __name__ == '__main__':
         print('')
         print('TAPPS: Technical (Analysis) and Applied Statistics')
         print('')
-        print('Copyright (C) 2015, Maurice HT Ling (on behalf of TAPPS Team)')
+        print('Copyright (C) 2015-%s, Maurice HT Ling (on behalf of TAPPS Team)' % \
+            datetime.now().year)
         print('https://github.com/mauriceling/tapps')
         print('')
         print('Usage: python tapps.py [option] [parameter]')
