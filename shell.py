@@ -35,6 +35,9 @@ from copads.dataframe import Dataframe
 import engine as e
 from tappsparser import TAPPSParser
 
+if (sys.version_info < (3, 0)):
+    input = raw_input
+
 class Shell(object):
     '''
     Command-line shell and TAPPS virtual machine.
@@ -210,7 +213,7 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         @param operand: bytecode operand(s), if any
         @type operand: list
         '''
-        environment = self.environment.keys()
+        environment = [k for k in self.environment.keys()]
         environment.sort()
         print('')
         print('Environment Variables:')
@@ -1068,15 +1071,15 @@ Project architect: Maurice HT Ling (mauriceling@acm.org)''')
         
     def cmdloop(self):
         '''
-        Command-line loop executor. This runs the shell like a command-line 
-        interpreter and calls Shell.interpret() method to process the statement/
-        command from the command-line.
+        Command-line loop executor. This runs the shell like a 
+        command-line interpreter and calls Shell.interpret() method to 
+        process the statement/command from the command-line.
         
         @return: session dictionary
         '''
         self.header()
         while True:
-            statement = raw_input('TAPPS: %s> ' % str(self.count)).strip() 
+            statement = input('TAPPS: %s> ' % str(self.count)).strip() 
             if statement == 'exit': return 0
             self.interpret(statement)
         return self.session
