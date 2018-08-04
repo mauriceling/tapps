@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import sys
 import copy
+import re
+import importlib
 
 import copads
 from copads.dataframe import Series
@@ -56,39 +58,31 @@ def LoadPlugin(session, plugin):
     dictionary to get it ready for use.
     
     The following checks are done:
-        1. Able to import plugin module (check for presence of a valid 
-        Python module with __init__.py file)
-        2. Able to import plugin manifest (check for presence of manifest 
-        file: <plugin module>/manifest.py)
-        3. Able to import parameters dictionary from 
-        <plugin module>/main.py file
-        4. Able to import main function, which is the plugin entry 
-        function, from <plugin module>/main.py file
-        5. Able to import instructions from <plugin module>/main.py file
-        6. Check for presence of plugin's name in manifest file
-        7. Check for presence of plugin's release (version number) in 
-        manifest file
-        8. Check for valid category in manifest file
-        9. Check for presence of plugin's short description in manifest 
-        file
-        10. Check for presence of plugin's long description in manifest file
-        11. Check for presence of plugin's URL in manifest file
-        12. Check for presence of plugin author(s)' contact(s) in manifest 
-        file
-        13. Check for presence of plugin's license in manifest file
+        1. Presence of callable main function in plugin
+        2. Presence of Parameters dictionary
+        3. Presence of instructions
+        4. Presence of plugin name
+        5. Presence of release number
+        6. Presence of acceptable category
+        7. Presence of short description
+        8. Presence of long description
+        9. Presence of URL
+        10. Presence of contact details
+        11. Presence of license
     
     The following changes will be made to session dictionary:
         1. If plugin is successfully loaded, the plugin name will be 
         appended to session['plugins']['loaded']
         2. If plugin is successfully loaded, the plugin name will be 
         appended to session['plugins'][<plugin category>]
-        3. If plugin is successfully loaded, details of the plugin will 
-        be loaded into session['plugins_<plugin name>'], and 
-        session['plugins_<plugin name>']['main'] will contain the function 
-        entry point for the plugin
-        4. If plugin is NOT successfully loaded (failure in one or more of 
-        the above checklist), the checklist for the plugin will be loaded 
-        into session['plugins']['loadFail'][<plugin name>]
+        3. If plugin is successfully loaded, details of the plugin 
+        will be loaded into session['plugins_<plugin name>'], and 
+        session['plugins_<plugin name>']['main'] will contain the 
+        function entry point for the plugin
+        4. If plugin is NOT successfully loaded (failure in one or 
+        more of the above checklist), the checklist for the plugin 
+        will be loaded into session['plugins']['loadFail'][<plugin 
+        name>]
         
     @param session: dictionary to hold all data within the current session. 
     Please see module documentation for more details.
@@ -98,73 +92,84 @@ def LoadPlugin(session, plugin):
     @type plugin: string
     @return: session dictionary
     '''
-    checks = ['ImportError:Plugin',
-              'ImportError:Manifest',
-              'ImportError:Parameters',
-              'ImportError:MainFunction',
-              'MainError:NoInstructions',
-              'ManifestError:NoName',
-              'ManifestError:NoRelease',
-              'ManifestError:InvalidCategory',
-              'ManifestError:NoShortDescription',
-              'ManifestError:NoLongDescription',
-              'ManifestError:NoURL',
-              'ManifestError:NoContact',
-              'ManifestError:NoLicense']
-    try: 
-        exec('from plugins import %s' % plugin)
-        checks[0] = 'Passed'
-    except: pass
-    try: 
-        exec('from plugins.%s import %s' % (plugin, 'manifest'))
-        checks[1] = 'Passed'
-    except: pass
-    try: 
-        exec('from plugins.%s.main import %s' % (plugin, 'parameters'))
+    checks = ['MainFunctionError',
+              'ParametersError',
+              'InstructionsError',
+              'NameError',
+              'ReleaseError',
+              'CategoryError',
+              'ShortDescriptionError',
+              'LongDescriptionError',
+              'URLError',
+              'ContactError',
+              'LicenseError']
+    # Check 1: Presence of callable main function in plugin
+    try:
+        if callable(plugin.main):
+            main = plugin.main
+            checks[0] = 'Passed'
+        else:
+            print('MainFunctionError - main not callable')
+    except:
+        print('MainFunctionError - general exception')
+    # Check 2: Presence of Parameters dictionary
+    try:
+        if type(plugin.parameters) == type({}):
+            parameters = plugin.parameters
+            checks[1] = 'Passed'
+        else:
+            print('ParametersError - parameters type is not dictionary')
+    except:
+        print('ParametersError - general exception')
+    # Check 3: Presence of instructions
+    try:
+        instructions = plugin.instructions
         checks[2] = 'Passed'
-    except: pass
-    try: 
-        exec('from plugins.%s.main import %s' % (plugin, 'main'))
+    except: print('InstructionsError')
+    # Check 4: Presence of plugin name
+    try:
+        plugin_name = plugin.name
         checks[3] = 'Passed'
-    except: pass
-    try: 
-        exec('from plugins.%s.main import %s' % (plugin, 'instructions'))
+    except: print('NameError')
+    # Check 5: Presence of release number
+    try:
+        release = plugin.release
         checks[4] = 'Passed'
-    except: pass
-    try: 
-        plugin_name = manifest.name
-        if plugin_name != '':
-            checks[5] = 'Passed'
-    except: pass
+    except: print('ReleaseError')
+    # Check 6: Presence of acceptable category
     try:
-        release = manifest.release
-        checks[6] = 'Passed'
-    except: pass
-    try:
-        category = manifest.category
+        category = plugin.category
         if category in plugin_categories:
-            checks[7] = 'Passed'
-    except: pass
+            checks[5] = 'Passed'
+        else:
+            print('CategoryError - Invalid category')
+    except: print('CategoryError - general exception')
+    # Check 7: Presence of short description
     try:
-        sDesc = manifest.shortDescription
+        sDesc = plugin.shortDescription
+        checks[6] = 'Passed'
+    except: print('ShortDescriptionError')
+    # Check 8: Presence of long description
+    try:
+        lDesc = plugin.longDescription
+        checks[7] = 'Passed'
+    except: print('LongDescriptionError')
+    # Check 9: Presence of URL
+    try:
+        URL = plugin.projectURL
         checks[8] = 'Passed'
-    except: pass
+    except: print('URLError')
+    # Check 10: Presence of contact details
     try:
-        lDesc = manifest.longDescription
+        contact = plugin.contactDetails
         checks[9] = 'Passed'
-    except: pass
+    except: print('ContactError')
+    # Check 11: Presence of license
     try:
-        URL = manifest.projectURL
+        license = plugin.license
         checks[10] = 'Passed'
-    except: pass
-    try:
-        contact = manifest.contactDetails
-        checks[11] = 'Passed'
-    except: pass
-    try:
-        license = manifest.license
-        checks[12] = 'Passed'
-    except: pass
+    except: print('LicenseError')
+    # Tabulate passes
     pass_rate = float(len([x for x in checks if x == 'Passed'])) / float(len(checks))
     if pass_rate < 1.0:
         session['plugins']['loadFail'][plugin] = checks
@@ -183,49 +188,61 @@ def LoadPlugin(session, plugin):
                                             'contact': contact,
                                             'license': license}
     return session
-
-def GetPlugins(session, path):
-    '''
-    Function to discover available plugins and load each of the plugins 
-    (using engine.LoadPlugin function to each plugin) into session 
-    dictionary and get the plugins ready for use. Each plugin resides 
-    within its own folder in the plugin directory/folder; hence, the 
-    plugins discovery process is to list down the directory/folder names 
-    within the plugin directory/folder.
     
-    As this function calls engine.LoadPlugin function repeatedly to each 
-    plugin, the following changes will be made to session dictionary:
+def GetPlugins(session, pluginpath='plugins'):
+    '''
+    Function to discover available plugins and load each of the 
+    plugins (using engine.LoadPlugin function to each plugin) into 
+    session dictionary and get the plugins ready for use. Each plugin is a Python script file (with or without its own folder) in the 
+    plugin directory/folder; hence, the plugins discovery process is 
+    to list down the directory/folder names within the plugin directory
+    /folder.
+    
+    As this function calls engine.LoadPlugin function repeatedly to 
+    each plugin, the following changes will be made to session 
+    dictionary:
         1. If plugin is successfully loaded, the plugin name will be 
         appended to session['plugins']['loaded']
         2. If plugin is successfully loaded, the plugin name will be 
         appended to session['plugins'][<plugin category>]
-        3. If plugin is successfully loaded, details of the plugin will 
-        be loaded into session['plugins_<plugin name>'], and 
-        session['plugins_<plugin name>']['main'] will contain the function 
-        entry point for the plugin
-        4. If plugin is NOT successfully loaded (failure in one or more of 
-        the above checklist), the checklist for the plugin will be loaded 
-        into session['plugins']['loadFail'][<plugin name>]
+        3. If plugin is successfully loaded, details of the plugin 
+        will be loaded into session['plugins_<plugin name>'], and 
+        session['plugins_<plugin name>']['main'] will contain the 
+        function entry point for the plugin
+        4. If plugin is NOT successfully loaded (failure in one or 
+        more of the above checklist), the checklist for the 
+        plugin will be loaded into 
+        session['plugins']['loadFail'][<plugin name>]
         
-    @param session: dictionary to hold all data within the current session. 
-    Please see module documentation for more details.
-    @param path: full path to plugin directory/folder. Default = <current 
-    working directory>/plugins
+    @param session: dictionary to hold all data within the current 
+    session. Please see module documentation for more details.
+    @param path: path to plugin directory/folder. Default = plugins
     @type path: string
     @return: session dictionary
     '''
-    # print path, os.walk(path), [x for x in os.walk(path)]
-    plugin_directories = [x for x in os.walk(path)][0][1]
-    plugin_directories = [x for x in plugin_directories
-                          if x not in ['template_1', 'Template_1']]
-    for plugin in plugin_directories:
-        session = LoadPlugin(session, plugin)
+    pluginpath = str(pluginpath)
+    pysearchre = re.compile('.py$', re.IGNORECASE)
+    pluginfiles = filter(pysearchre.search,
+                        os.listdir(os.path.join(os.path.dirname(__file__), pluginpath)))
+    form_module = lambda fp: '.' + os.path.splitext(fp)[0]
+    pluginlist = [x for x in map(form_module, pluginfiles)]
+    pluginlist = [x for x in pluginlist 
+                  if not (x.startswith('.__') or 
+                      x.startswith('.wikipage_generator') or
+                      x.startswith('.template'))]
+    # import parent module / namespace
+    importlib.import_module('plugins')
+    for plugin in pluginlist:
+        print('Loading plugin: %s' % str(plugin[1:]))
+        imported_plugin = importlib.import_module(plugin, 
+            package="plugins")
+        session = LoadPlugin(session, imported_plugin)
     for category in plugin_categories:
         plugin_list = session['plugins'][category]
         plugin_list = list(set(plugin_list))
         session['plugins'][category] = plugin_list
     return session
-    
+
 def RunPlugin(session, parameter_name):
     '''
     Function to run/execute a plugin using the parameters (sub-dictionary 
